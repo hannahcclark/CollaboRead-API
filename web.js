@@ -3,8 +3,23 @@ var app = express()
 
 app.set('port', (process.env.PORT || 5000))
 
-app.get('/', function(request, response) {
-    response.send('Hello world!')
+var mongoURI = process.env.MONGOLAB_URI
+
+var mongo = require('mongodb')
+var db = mongo.Db.connect(mongoURI, function(error, dbConnection) {
+    if (error) {
+        console.log(error)
+    } else {
+        db = dbConnection
+    }
+})
+
+app.get('/users', function(req, res) {
+    db.collection("users", function(err, collection) {
+        collection.find({}).toArray(function(err, documents) {
+            res.send(documents)
+        })
+    })
 })
 
 app.listen(app.get('port'), function() {
