@@ -31,6 +31,27 @@ app.get('/lecturers', function(req, res) {
     })
 })
 
+app.get('/caseset', function(req, res) {
+    var caseSetID = validator.escape(req.query.casesetID)
+    db.collection("caseSets", function(err, caseSetsCollection) {
+        if (err) {
+            console.log(err)
+            res.status(404).end()
+            res.send()
+        } else {
+            caseSetsCollection.findOne({"caseSet_id": caseSetID}, function(err, caseSet) {
+                if (err) {
+                    console.log(err)
+                    res.status(404).end()
+                    res.send()
+                } else {
+                    res.send(caseSet)
+                }
+            })
+        }
+    })
+})
+
 app.get('/lecturercases', function(req, res) {
     var lecturerID = validator.escape(req.query.lecturerID)
     db.collection("users", function(err, usersCollection) {
