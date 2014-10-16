@@ -15,71 +15,84 @@ var db = mongo.Db.connect(mongoURI, function(error, dbConnection) {
     }
 })
 
+function reportError(status, error, response) {
+    console.log(error)
+    response.status(status).end()
+    response.send()
+}
+
 app.get('/users', function(req, res) {
-    db.collection("users", function(err, collection) {
-        collection.find({}).toArray(function(err, documents) {
-            res.send(documents)
-        })
-    })
-})
+    db.collection("users", function(err, userCollection) {
 
-app.get('/lecturers', function(req, res) {
-    db.collection("users", function(err, collection) {
-        collection.find({"type":"lecturer"}).toArray(function(err, documents) {
-            res.send(documents)
-        })
-    })
-})
+        var userQuery = validator.escape(req.query.id)
 
-app.get('/caseset', function(req, res) {
-    var caseSetID = validator.escape(req.query.casesetID)
-    db.collection("caseSets", function(err, caseSetsCollection) {
-        if (err) {
-            console.log(err)
-            res.status(404).end()
-            res.send()
+        if (!userQuery) {
+            userCollection.find({}).toArray(function(err, userResults) {
+                res.send(userResults)
+            })
+
         } else {
-            caseSetsCollection.findOne({"caseSet_id": caseSetID}, function(err, caseSet) {
+            userCollection.findOne({"userID":userQuery}, function(err, userID) {
                 if (err) {
-                    console.log(err)
-                    res.status(404).end()
-                    res.send()
+                    reportError(404, err, res)
                 } else {
-                    res.send(caseSet)
+                    res.send(userID)
                 }
             })
         }
     })
 })
 
-app.get('/lecturercases', function(req, res) {
+app.get('/lecturers', function(req, res) {
+    db.collection("users", function(err, userCollection) {
+
+        var lecturerQuery = validator.escape(req.query.id)
+
+        if (!lecturerQuery) {
+            userCollection.find({"type":"lecturer"}).toArray(function(err, lecturerResults) {
+                res.send(lecturerResults)
+            })
+
+        } else {
+            userCollection.findOne({"type":"lecturer", "userID":lecturerQuery}, function(err, userID) {
+                if (err) {
+                    reportError(404, error, res)
+                } else {
+                    res.send(userID)
+                }
+            })
+        }
+    })
+})
+
+app.get('/casesets', function(req, res) {
+    var setID = validator.escape(req.query.id)
     var lecturerID = validator.escape(req.query.lecturerID)
-    db.collection("users", function(err, usersCollection) {
-        usersCollection.findOne({"id_num": lecturerID}, function(err, user) {
-            if (err || user["type"] != "lecturer") {
-                console.log(err)
-                res.status(404).end()
-                res.send()
-            } else {
-                db.collection("caseSets", function(err, caseSetsCollection) {
+
+    db.collection("caseSets", function(err, caseSetsCollection) {
+        if (err) {
+            reportError(404, err, res)
+        } else {
+            if (setID) {
+                caseSetsCollection.findOne({"setID": setID}, function(err, caseSet) {
                     if (err) {
-                        console.log(err)
-                        res.status(404).end()
-                        res.send()
+                        reportError(404, err, res)
                     } else {
-                        caseSetsCollection.find({"caseSet_id": {$in:user["caseSets"]} }).toArray(function(err, caseSet) {
-                            if (err) {
-                                console.log(err)
-                                res.status(404).end()
-                                res.send()
-                            } else {
-                                res.send(caseSet)
-                            }
-                        })
+                        res.send(caseSet)
                     }
                 })
+            } else if (lecturerID) {
+                caseSetsCollection.find({"owners": lecturerID}).toArray(function(err, caseSets) {
+                    if (err) {
+                        reportError(404, err, res)
+                    } else {
+                        res.send(caseSets)
+                    }
+                })
+            } else {
+                reportError(404, err, res)
             }
-        })
+        }
     })
 })
 
