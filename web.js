@@ -1,5 +1,8 @@
 var express = require('express')
 var app = express()
+var bodyParser = require('body-parser')
+var bodyParserURLEncoded = bodyParser.urlencoded({extended: true})
+
 var validator = require('validator')
 
 app.set('port', (process.env.PORT || 5000))
@@ -94,6 +97,46 @@ app.get('/casesets', function(req, res) {
             }
         }
     })
+})
+
+app.post('/submitanswer', bodyParserURLEncoded, function(req, res) {
+    var setID = validator.escape(req.body.setID)
+    var caseID = validator.escape(req.body.caseID)
+    var owners = validator.escape(req.body.owners)
+    var answerData = validator.escape(req.body.answerData)
+
+    if (!owners || !answerData) {
+        reportError(404, "Missing required parameters", res)
+    } else {
+        db.collection("caseSets", function(err, caseSetsCollection) {
+            if (err) {
+                reportError(404, err, res)
+            } else {
+                caseSetsCollection.findOne({"setID": setID}, function(err, caseSet) {
+                    if (err) {
+                        reportError(404, err, res)
+                    } else {
+                        var answer = {
+                            "owners": owners,
+                            "answerData": answerData,
+                            "submissionDate": (new Date()).getTime()
+                        }
+
+                        caseSet["cases"][caseID]["answers"].push(answer)
+
+                        caseSetsCollection.save(caseSet, function(err) {
+                            if (err) {
+                                reportError(404, err, res)
+                            } else {
+                                res.status(200).end()
+                                res.send()
+                            }
+                        })
+                    }
+                })
+            }
+        })
+    }
 })
 
 app.listen(app.get('port'), function() {
