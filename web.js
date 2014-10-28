@@ -128,8 +128,7 @@ app.post('/submitanswer', bodyParserURLEncoded, function(req, res) {
                             if (err) {
                                 reportError(404, err, res)
                             } else {
-                                res.status(200).end()
-                                res.send()
+                                res.send(caseSet)
                             }
                         })
                     }
