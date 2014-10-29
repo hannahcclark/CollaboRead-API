@@ -6,6 +6,8 @@ var validator = require('validator');
 var User = require('../app/models/user');
 var CaseSets = require('../app/models/caseSets');
 
+var prefix = "/api/v1/"
+
 function reportError(status, error, response) {
     console.log(error)
     response.status(status).end()
@@ -14,7 +16,7 @@ function reportError(status, error, response) {
 
 module.exports = function(app) {
 
-    app.get('/users', function(req, res) {
+    app.get(prefix+'users', function(req, res) {
         var userQuery = validator.escape(req.query.id);
 
         if (!userQuery) {
@@ -33,7 +35,7 @@ module.exports = function(app) {
         }
     });
 
-    app.get('/lecturers', function(req, res) {
+    app.get(prefix+'lecturers', function(req, res) {
         var lecturerQuery = validator.escape(req.query.id);
 
         if (!lecturerQuery) {
@@ -52,7 +54,7 @@ module.exports = function(app) {
         }
     });
 
-    app.get('/casesets', function(req, res) {
+    app.get(prefix+'casesets', function(req, res) {
         var setID = validator.escape(req.query.id);
         var lecturerID = validator.escape(req.query.lecturerID);
 
@@ -77,7 +79,7 @@ module.exports = function(app) {
         }
     });
 
-    app.post('/submitanswer', bodyParserURLEncoded, function(req, res) {
+    app.post(prefix+'submitanswer', bodyParserURLEncoded, function(req, res) {
         var setID = validator.escape(req.body.setID)
         var caseID = validator.escape(req.body.caseID)
         var owners = validator.escape(req.body.owners)
