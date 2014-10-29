@@ -3,98 +3,79 @@ var bodyParserURLEncoded = bodyParser.urlencoded({extended: true});
 
 var validator = require('validator');
 
-var mongoURI = process.env.MONGOLAB_URI;
-var mongo = require('mongodb');
-var db = mongo.Db.connect(mongoURI, function(error, dbConnection) {
-    if (error) {
-        console.log(error);
-    } else {
-        db = dbConnection;
-    }
-});
+var User = require('../app/models/user');
+var CaseSets = require('../app/models/caseSets');
+
+function reportError(status, error, response) {
+    console.log(error)
+    response.status(status).end()
+    response.send()
+}
 
 module.exports = function(app) {
 
-    function reportError(status, error, response) {
-        console.log(error)
-        response.status(status).end()
-        response.send()
-    }
-
     app.get('/users', function(req, res) {
-        db.collection("users", function(err, userCollection) {
+        var userQuery = validator.escape(req.query.id);
 
-            var userQuery = validator.escape(req.query.id)
+        if (!userQuery) {
+            User.find({}, function(err, userResults) {
+                res.send(userResults);
+            });
 
-            if (!userQuery) {
-                userCollection.find({}).toArray(function(err, userResults) {
-                    res.send(userResults)
-                })
-
-            } else {
-                userCollection.findOne({"userID":userQuery}, function(err, userID) {
-                    if (err) {
-                        reportError(404, err, res)
-                    } else {
-                        res.send(userID)
-                    }
-                })
-            }
-        })
-    })
+        } else {
+            User.findOne({"userID":userQuery}, function(err, userID) {
+                if (err) {
+                    reportError(404, err, res);
+                } else {
+                    res.send(userID);
+                }
+            });
+        }
+    });
 
     app.get('/lecturers', function(req, res) {
-        db.collection("users", function(err, userCollection) {
+        var lecturerQuery = validator.escape(req.query.id);
 
-            var lecturerQuery = validator.escape(req.query.id)
+        if (!lecturerQuery) {
+            User.find({"type":"lecturer"}, function(err, lecturerResults) {
+                res.send(lecturerResults);
+            });
 
-            if (!lecturerQuery) {
-                userCollection.find({"type":"lecturer"}).toArray(function(err, lecturerResults) {
-                    res.send(lecturerResults)
-                })
-
-            } else {
-                userCollection.findOne({"type":"lecturer", "userID":lecturerQuery}, function(err, userID) {
-                    if (err) {
-                        reportError(404, error, res)
-                    } else {
-                        res.send(userID)
-                    }
-                })
-            }
-        })
-    })
+        } else {
+            User.findOne({"type":"lecturer", "userID":lecturerQuery}, function(err, userID) {
+                if (err) {
+                    reportError(404, error, res);
+                } else {
+                    res.send(userID);
+                }
+            });
+        }
+    });
 
     app.get('/casesets', function(req, res) {
-        var setID = validator.escape(req.query.id)
-        var lecturerID = validator.escape(req.query.lecturerID)
+        var setID = validator.escape(req.query.id);
+        var lecturerID = validator.escape(req.query.lecturerID);
 
-        db.collection("caseSets", function(err, caseSetsCollection) {
-            if (err) {
-                reportError(404, err, res)
-            } else {
-                if (setID) {
-                    caseSetsCollection.findOne({"setID": setID}, function(err, caseSet) {
-                        if (err) {
-                            reportError(404, err, res)
-                        } else {
-                            res.send(caseSet)
-                        }
-                    })
-                } else if (lecturerID) {
-                    caseSetsCollection.find({"owners": lecturerID}).toArray(function(err, caseSets) {
-                        if (err) {
-                            reportError(404, err, res)
-                        } else {
-                            res.send(caseSets)
-                        }
-                    })
+        if (setID) {
+            CaseSets.findOne({"setID": setID}, function(err, caseSet) {
+                if (err) {
+                    reportError(404, err, res);
                 } else {
-                    reportError(404, err, res)
+                    res.send(caseSet);
                 }
-            }
-        })
-    })
+            });
+        } else if (lecturerID) {
+            CaseSets.find({"owners": lecturerID}, function(err, caseSets) {
+                if (err) {
+                    reportError(404, err, res);
+                } else {
+                    res.send(caseSets);
+                }
+            });
+        } else {
+            reportError(404, "No query specified", res);
+        }
+    });
 
     app.post('/submitanswer', bodyParserURLEncoded, function(req, res) {
         var setID = validator.escape(req.body.setID)
@@ -105,29 +86,29 @@ module.exports = function(app) {
         if (!owners || !answerData) {
             reportError(404, "Missing required parameters", res)
         } else {
-            db.collection("caseSets", function(err, caseSetsCollection) {
+            CaseSets.findOne({"setID": setID}, function(err, caseSet) {
                 if (err) {
                     reportError(404, err, res)
                 } else {
-                    caseSetsCollection.findOne({"setID": setID}, function(err, caseSet) {
+
+                    var answer = {
+                        "owners": owners,
+                        "answerData": answerData,
+                        "submissionDate": (new Date()).getTime()
+                    }
+
+                    for (c in caseSet["cases"]) {
+                        if (caseSet["cases"][c]["caseID"] == caseID) {
+                            console.log(caseSet["cases"][c]);
+                            caseSet["cases"][c]["answers"].push(answer);
+                        }
+                    }
+
+                    caseSet.save(function(err) {
                         if (err) {
                             reportError(404, err, res)
                         } else {
-                            var answer = {
-                                "owners": owners,
-                                "answerData": answerData,
-                                "submissionDate": (new Date()).getTime()
-                            }
-
-                            caseSet["cases"][caseID]["answers"].push(answer)
-
-                            caseSetsCollection.save(caseSet, function(err) {
-                                if (err) {
-                                    reportError(404, err, res)
-                                } else {
-                                    res.send(caseSet)
-                                }
-                            })
+                            res.send(caseSet)
                         }
                     })
                 }
