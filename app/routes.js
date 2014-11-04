@@ -14,10 +14,13 @@ function reportError(status, error, response) {
     response.send()
 }
 
+//nothing is validated right now. that should be fixed
+
 module.exports = function(app) {
 
     app.get(prefix+'users', function(req, res) {
-        var userQuery = validator.escape(req.query.id);
+        // var userQuery = validator.escape(req.query.id);
+        var userQuery = req.query.id;
 
         if (!userQuery) {
             User.find({}, function(err, userResults) {
@@ -36,7 +39,8 @@ module.exports = function(app) {
     });
 
     app.get(prefix+'lecturers', function(req, res) {
-        var lecturerQuery = validator.escape(req.query.id);
+        // var lecturerQuery = validator.escape(req.query.id);
+        var lecturerQuery = req.query.id;
 
         if (!lecturerQuery) {
             User.find({"type":"lecturer"}, function(err, lecturerResults) {
@@ -55,8 +59,10 @@ module.exports = function(app) {
     });
 
     app.get(prefix+'casesets', function(req, res) {
-        var setID = validator.escape(req.query.id);
-        var lecturerID = validator.escape(req.query.lecturerID);
+        // var setID = validator.escape(req.query.id);
+        // var lecturerID = validator.escape(req.query.lecturerID);
+        var setID = req.query.id;
+        var lecturerID = req.query.lecturerID;
 
         if (setID) {
             CaseSets.findOne({"setID": setID}, function(err, caseSet) {
@@ -80,10 +86,14 @@ module.exports = function(app) {
     });
 
     app.post(prefix+'submitanswer', bodyParserURLEncoded, function(req, res) {
-        var setID = validator.escape(req.body.setID)
-        var caseID = validator.escape(req.body.caseID)
-        var owners = validator.escape(req.body.owners)
-        var answerData = validator.escape(req.body.answerData)
+        // var setID = validator.escape(req.body.setID)
+        // var caseID = validator.escape(req.body.caseID)
+        // var owners = validator.escape(req.body.owners)
+        // var answerData = validator.escape(req.body.answerData)
+        var setID = req.body.setID;
+        var caseID = req.body.caseID;
+        var owners = req.body.owners;
+        var answerData = req.body.answerData;
 
         if (!owners || !answerData) {
             reportError(404, "Missing required parameters", res)
