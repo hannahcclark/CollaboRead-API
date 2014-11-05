@@ -104,8 +104,8 @@ module.exports = function(app) {
                 } else {
 
                     var answer = {
-                        "owners": owners,
-                        "answerData": answerData,
+                        "owners": JSON.parse(owners),
+                        "answerData": JSON.parse(answerData),
                         "submissionDate": (new Date()).getTime()
                     }
 

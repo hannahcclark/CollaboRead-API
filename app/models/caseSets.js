@@ -2,7 +2,11 @@ var mongoose = require('mongoose');
 
 var Answer = mongoose.Schema({
     owners          : [String],
-    answerData      : String,
+    answerData      : [{
+        x : Number,
+        y : Number,
+        isEnd : Number
+    }],
     submissionDate  : Date
 });
 
