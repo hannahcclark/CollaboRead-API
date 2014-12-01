@@ -16,9 +16,11 @@ function reportError(status, error, response) {
 
 //nothing is validated right now. that should be fixed
 
-module.exports = function(app) {
+module.exports = function(http, ws) {
 
-    app.get(prefix+'users', function(req, res) {
+// http routes
+
+    http.get(prefix+'users', function(req, res) {
         // var userQuery = validator.escape(req.query.id);
         var userQuery = req.query.id;
 
@@ -38,7 +40,7 @@ module.exports = function(app) {
         }
     });
 
-    app.get(prefix+'lecturers', function(req, res) {
+    http.get(prefix+'lecturers', function(req, res) {
         // var lecturerQuery = validator.escape(req.query.id);
         var lecturerQuery = req.query.id;
 
@@ -58,7 +60,7 @@ module.exports = function(app) {
         }
     });
 
-    app.get(prefix+'casesets', function(req, res) {
+    http.get(prefix+'casesets', function(req, res) {
         // var setID = validator.escape(req.query.id);
         // var lecturerID = validator.escape(req.query.lecturerID);
         var setID = req.query.id;
@@ -85,7 +87,7 @@ module.exports = function(app) {
         }
     });
 
-    app.post(prefix+'submitanswer', bodyParserURLEncoded, function(req, res) {
+    http.post(prefix+'submitanswer', bodyParserURLEncoded, function(req, res) {
         // var setID = validator.escape(req.body.setID)
         // var caseID = validator.escape(req.body.caseID)
         // var owners = validator.escape(req.body.owners)
@@ -127,4 +129,32 @@ module.exports = function(app) {
             })
         }
     })
+
+// websockets
+
+    var count = 0;
+    var clients = {};
+
+    ws.on('request', function(req) {
+        var connection = req.accept(null, req.origin);
+
+        var id = count++;
+        clients[id] = connection;
+
+        connection.on('message', function(message) {
+
+            if (message.type == 'utf8') {
+                console.log("received " + message.utf8Data)
+
+                for (var c in clients) {
+                    clients[c].sendUTF(message.utf8Data);
+                }
+            }
+
+            connection.on('close', function(connection) {
+                    delete clients[id];
+                    console.log("closed "+id);
+            });
+        });
+    });
 }
