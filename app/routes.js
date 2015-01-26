@@ -93,7 +93,9 @@ module.exports = function(app) {
         var setID = req.body.setID;
         var caseID = req.body.caseID;
         var owners = req.body.owners;
-        var answerData = req.body.answerData;
+
+        //rename this shit
+        var answerData = req.body.drawings;
 
         if (!owners || !answerData) {
             reportError(404, "Missing required parameters", res)
@@ -105,13 +107,12 @@ module.exports = function(app) {
 
                     var answer = {
                         "owners": JSON.parse(owners),
-                        "answerData": JSON.parse(answerData),
+                        "drawings": JSON.parse(answerData)
                         "submissionDate": (new Date()).getTime()
                     }
 
                     for (c in caseSet["cases"]) {
                         if (caseSet["cases"][c]["caseID"] == caseID) {
-                            console.log(caseSet["cases"][c]);
                             caseSet["cases"][c]["answers"].push(answer);
                         }
                     }

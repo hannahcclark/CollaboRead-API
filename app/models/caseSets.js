@@ -1,22 +1,38 @@
 var mongoose = require('mongoose');
 
 var Answer = mongoose.Schema({
+    answerID        : String,
     owners          : [String],
-    answerData      : [{
-        x : Number,
-        y : Number,
-        isEnd : Number
+    drawings        : [{
+        scanID  : String,
+        sliceID : String,
+        data    : [{
+            x       : Number,
+            y       : Number,
+            isEnd   : Number
+        }]
     }],
     submissionDate  : Date
 });
 
+var Scan = mongoose.Schema({
+    scanID  : String,
+    name    : String,
+    hasDrawing  : Boolean,
+    slices: [{
+        sliceID: String,
+        url: String,
+        hasDrawing: Boolean
+    }]
+});
+
 var Case = mongoose.Schema({
     caseID  : String,
-    images  : [String],
     date    : Date,
     name    : String,
-    answers : [Answer],
-    lecturerAnswer  : String
+    scans: [Scan],
+    answers: [Answer],
+    patientInfo: String
 });
 
 var caseSetSchema = mongoose.Schema({
