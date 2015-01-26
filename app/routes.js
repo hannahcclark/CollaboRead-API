@@ -107,7 +107,7 @@ module.exports = function(app) {
 
                     var answer = {
                         "owners": JSON.parse(owners),
-                        "drawings": JSON.parse(answerData)
+                        "drawings": JSON.parse(answerData),
                         "submissionDate": (new Date()).getTime()
                     }
 
