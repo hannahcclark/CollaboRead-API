@@ -123,6 +123,7 @@ module.exports = function(http, ws) {
                         if (err) {
                             reportError(404, err, res)
                         } else {
+                            pingLecturer();
                             res.send(caseSet)
                         }
                     })
@@ -143,19 +144,16 @@ module.exports = function(http, ws) {
         clients[id] = connection;
 
         connection.on('message', function(message) {
-
-            if (message.type == 'utf8') {
-                console.log("received " + message.utf8Data)
-
-                for (var c in clients) {
-                    clients[c].sendUTF(message.utf8Data);
-                }
-            }
-
             connection.on('close', function(connection) {
                     delete clients[id];
                     console.log("closed "+id);
             });
         });
     });
+
+    function pingLecturer() {
+        for (var c in clients) {
+            clients[c].sendUTF("update");
+        }
+    }
 }
