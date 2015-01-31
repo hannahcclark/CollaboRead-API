@@ -1,25 +1,20 @@
+var http = require('http');
 var express = require('express');
-var http = express();
-var httpServer = require('http');
-var webSocketServer = require('websocket').server;
+var app = express();
+var WebSocketServer = require('ws').Server;
 var bodyParser = require('body-parser');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 
+var port = process.env.PORT || 5000;
+
 var configDB = require('./config/database.js');
 mongoose.connect(configDB.url);
 
-http.set('port', (process.env.PORT || 5000));
-
-var hs = httpServer.createServer(function(req,res){});
-hs.listen(9999,function(){console.log("Websockets on 9999")});
-
-wsServer = new webSocketServer({
-    httpServer: hs
+var httpServer = http.createServer(app).listen(port, function() {
+        console.log("express server on port " + port);
 });
 
-require('./app/routes.js')(http, wsServer);
+var wss = new WebSocketServer({server: httpServer});
 
-http.listen(http.get('port'), function() {
-    console.log("running on localhost:"+http.get('port'));
-});
+require('./app/routes.js')(app, wss);

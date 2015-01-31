@@ -134,29 +134,10 @@ module.exports = function(http, ws) {
 
 // websockets
 
-    var count = 0;
-    var clients = {};
-
-    ws.on('request', function(req) {
-        var connection = req.accept(null, req.origin);
-
-        console.log("opening connection " + count);
-
-        var id = count++;
-        clients[id] = connection;
-
-        connection.on('message', function(message) {
-            connection.on('close', function(connection) {
-                    delete clients[id];
-                    console.log("closed "+id);
-            });
-        });
-    });
-
     function pingLecturer() {
         console.log("pinging lecturers");
-        for (var c in clients) {
-            clients[c].sendUTF("update");
-        }
+        ws.clients.forEach(function each(client) {
+            client.send("update");
+        });
     }
 }
