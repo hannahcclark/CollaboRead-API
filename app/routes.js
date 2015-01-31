@@ -140,6 +140,8 @@ module.exports = function(http, ws) {
     ws.on('request', function(req) {
         var connection = req.accept(null, req.origin);
 
+        console.log("opening connection " + count);
+
         var id = count++;
         clients[id] = connection;
 
@@ -152,6 +154,7 @@ module.exports = function(http, ws) {
     });
 
     function pingLecturer() {
+        console.log("pinging lecturers");
         for (var c in clients) {
             clients[c].sendUTF("update");
         }
