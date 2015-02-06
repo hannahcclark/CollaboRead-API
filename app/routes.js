@@ -115,7 +115,26 @@ module.exports = function(http, ws) {
 
                     for (c in caseSet["cases"]) {
                         if (caseSet["cases"][c]["caseID"] == caseID) {
-                            caseSet["cases"][c]["answers"].push(answer);
+
+                            var currentCase = caseSet["cases"][c];
+
+                            // determine if user has already submitted an answer
+                            var resubmission = false;
+                            var submissionOwners = answer["owners"].toString()
+
+                            for (var a = 0; a < currentCase["answers"].length; a++) {
+                                var answerOwners = currentCase["answers"][a]["owners"].toString();
+
+                                if (submissionOwners === answerOwners) {
+                                    resubmission = true;
+                                    caseSet["cases"][c]["answers"] = answer;
+                                    break;
+                                }
+                            }
+
+                            if (!resubmission) {
+                                caseSet["cases"][c]["answers"].push(answer);
+                            }
                         }
                     }
 
@@ -134,6 +153,8 @@ module.exports = function(http, ws) {
 
 // websockets
 
+    // it tells every connected lecturer to refresh regardless of who submitted
+    // should probably change that
     function pingLecturer() {
         console.log("pinging lecturers");
         ws.clients.forEach(function each(client) {
