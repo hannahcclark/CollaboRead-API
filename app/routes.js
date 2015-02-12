@@ -128,6 +128,7 @@ module.exports = function(http, ws) {
                                 if (submissionOwners === answerOwners) {
                                     resubmission = true;
                                     caseSet["cases"][c]["answers"][a].drawings = answer.drawings;
+                                    caseSet["cases"][c]["answers"][a].drawings = (new Date()).getTime();
                                     break;
                                 }
                             }
