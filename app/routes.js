@@ -167,7 +167,9 @@ module.exports = function(http, ws) {
                 console.log("received message: " + message);
                 console.log(updateDates);
                 console.log(updateDates[message]);
-                connection.send(updateDates[message].toString());
+                if (updateDates[message]) {
+                    connection.send(updateDates[message].toString());
+                }
             }
         });
     });
