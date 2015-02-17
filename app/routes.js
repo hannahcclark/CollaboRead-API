@@ -14,6 +14,8 @@ function reportError(status, error, response) {
     response.send()
 }
 
+var updateDates = {};
+
 //nothing is validated right now. that should be fixed
 
 module.exports = function(http, ws) {
@@ -136,6 +138,9 @@ module.exports = function(http, ws) {
                             if (!resubmission) {
                                 caseSet["cases"][c]["answers"].push(answer);
                             }
+
+                            updateDates[currentCase["caseID"]] = answer.submissionDate;
+
                         }
                     }
 
@@ -143,7 +148,6 @@ module.exports = function(http, ws) {
                         if (err) {
                             reportError(404, err, res)
                         } else {
-                            pingLecturer();
                             res.send(caseSet)
                         }
                     })
@@ -154,12 +158,11 @@ module.exports = function(http, ws) {
 
 // websockets
 
-    // it tells every connected lecturer to refresh regardless of who submitted
-    // should probably change that
-    function pingLecturer() {
-        console.log("pinging lecturers");
-        ws.clients.forEach(function each(client) {
-            client.send("update");
+    ws.on('connection', function connection(connection) {
+        connection.on('message', function incoming(message) {
+            if (message) {
+                connection.send(updateDates[message]);
+            }
         });
-    }
+    });
 }
