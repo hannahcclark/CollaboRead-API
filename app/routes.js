@@ -161,7 +161,7 @@ module.exports = function(http, ws) {
     ws.on('connection', function connection(connection) {
         connection.on('message', function incoming(message) {
             if (message) {
-                connection.send(updateDates[message]);
+                connection.send(updateDates[message].toString());
             }
         });
     });
