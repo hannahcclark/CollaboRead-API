@@ -140,6 +140,8 @@ module.exports = function(http, ws) {
                             }
 
                             updateDates[currentCase["caseID"]] = answer.submissionDate;
+                            console.log("submitted");
+                            console.log(updateDates);
 
                         }
                     }
@@ -159,8 +161,12 @@ module.exports = function(http, ws) {
 // websockets
 
     ws.on('connection', function connection(connection) {
+        console.log("received connection");
         connection.on('message', function incoming(message) {
             if (message) {
+                console.log("received message: " + message);
+                console.log(updateDates);
+                console.log(updateDates[message]);
                 connection.send(updateDates[message].toString());
             }
         });
