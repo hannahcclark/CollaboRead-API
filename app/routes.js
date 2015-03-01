@@ -54,7 +54,6 @@ module.exports = function(http, ws) {
 // http routes
 
     http.post(prefix+'login', bodyParserURLEncoded, passport.authenticate('local', {session: false}), function(req, res) {
-        // res.send(200);
         User.findOne({'email': req.body.email}, function(err, user) {
             res.send(user);
         });
@@ -97,6 +96,21 @@ module.exports = function(http, ws) {
                     res.send(userID);
                 }
             });
+        }
+    });
+
+    http.post(prefix+'usercheck', bodyParserURLEncoded, passport.authenticate('local', {session: false}), function(req, res) {
+        var users = req.body.users ? JSON.parse(req.body.users) : null;
+        if (users) {
+            User.find({"email": {$in: users}}, {"email": 1, "_id": 0}, function(err, userList) {
+                var emailList = [];
+                userList.map(function(currentValue, index, array) {
+                    emailList.push(currentValue["email"]);
+                });
+                res.send(emailList);
+            });
+        } else {
+            res.status(404).end();
         }
     });
 
