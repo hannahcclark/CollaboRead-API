@@ -8,6 +8,33 @@ var CaseSets = require('../app/models/caseSets');
 
 var prefix = "/api/v1/"
 
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var expressSession = require('express-session');
+
+passport.use(new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password'
+    },
+    function(email, password, done) {
+        User.findOne({'email': email}, function(err, user) {
+            if (err) {
+                return done(err);
+            }
+
+            if (!user) {
+                return done(null, false, {message: 'Incorrect username.'});
+            }
+
+            if (!user.validPassword(password)) {
+                return done(null, false, {message: 'Incorrect password.'});
+            }
+
+            return done(null, user);
+        });
+    }
+));
+
 function reportError(status, error, response) {
     console.log(error)
     response.status(status).end()
@@ -20,29 +47,40 @@ var updateDates = {};
 
 module.exports = function(http, ws) {
 
+    http.use(expressSession({secret: 'secretkey'}));
+    http.use(passport.initialize());
+    http.use(passport.session());
+
 // http routes
 
-    http.get(prefix+'users', function(req, res) {
-        // var userQuery = validator.escape(req.query.id);
-        var userQuery = req.query.id;
-
-        if (!userQuery) {
-            User.find({}, function(err, userResults) {
-                res.send(userResults);
-            });
-
-        } else {
-            User.findOne({"userID":userQuery}, function(err, userID) {
-                if (err) {
-                    reportError(404, err, res);
-                } else {
-                    res.send(userID);
-                }
-            });
-        }
+    http.post(prefix+'login', bodyParserURLEncoded, passport.authenticate('local', {session: false}), function(req, res) {
+        // res.send(200);
+        User.findOne({'email': req.body.email}, function(err, user) {
+            res.send(user);
+        });
     });
 
-    http.get(prefix+'lecturers', function(req, res) {
+    http.get(prefix+'users', passport.authenticate('local', {session: false}), function(req, res) {
+            // var userQuery = validator.escape(req.query.id);
+            var userQuery = req.query.id;
+
+            if (!userQuery) {
+                User.find({}, function(err, userResults) {
+                    res.send(userResults);
+                });
+
+            } else {
+                User.findOne({"userID":userQuery}, function(err, userID) {
+                    if (err) {
+                        reportError(404, err, res);
+                    } else {
+                        res.send(userID);
+                    }
+                });
+            }
+    });
+
+    http.get(prefix+'lecturers', passport.authenticate('local', {session: false}), function(req, res) {
         // var lecturerQuery = validator.escape(req.query.id);
         var lecturerQuery = req.query.id;
 
@@ -62,7 +100,7 @@ module.exports = function(http, ws) {
         }
     });
 
-    http.get(prefix+'casesets', function(req, res) {
+    http.get(prefix+'casesets', passport.authenticate('local', {session: false}), function(req, res) {
         // var setID = validator.escape(req.query.id);
         // var lecturerID = validator.escape(req.query.lecturerID);
         var setID = req.query.id;
@@ -89,7 +127,7 @@ module.exports = function(http, ws) {
         }
     });
 
-    http.post(prefix+'submitanswer', bodyParserURLEncoded, function(req, res) {
+    http.post(prefix+'submitanswer', bodyParserURLEncoded, passport.authenticate('local', {session: false}), function(req, res) {
         // var setID = validator.escape(req.body.setID)
         // var caseID = validator.escape(req.body.caseID)
         // var owners = validator.escape(req.body.owners)
