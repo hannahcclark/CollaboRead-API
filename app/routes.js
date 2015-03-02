@@ -102,12 +102,12 @@ module.exports = function(http, ws) {
     http.post(prefix+'usercheck', bodyParserURLEncoded, passport.authenticate('local', {session: false}), function(req, res) {
         var users = req.body.users ? JSON.parse(req.body.users) : null;
         if (users) {
-            User.find({"email": {$in: users}}, {"email": 1, "_id": 0}, function(err, userList) {
-                var emailList = [];
-                userList.map(function(currentValue, index, array) {
-                    emailList.push(currentValue["email"]);
-                });
-                res.send(emailList);
+            User.find({"email": {$in: users}}, {"email": 1, "userID": 1, "name": 1, "_id": 0}, function(err, userList) {
+                if (!err) {
+                    res.send(userList);
+                } else {
+                    res.status(404).end();
+                }
             });
         } else {
             res.status(404).end();
