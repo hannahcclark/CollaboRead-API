@@ -59,6 +59,27 @@ module.exports = function(http, ws) {
         });
     });
 
+    http.post(prefix+'register', bodyParserURLEncoded, function(req, res) {
+        var user = new User({
+            "name": req.body.name,
+            "type": req.body.type,
+            "title": req.body.title,
+            "year": req.body.year,
+            "picture": req.body.picture,
+            "email": req.body.email,
+            "password": req.body.password,
+            "caseSets": []
+        });
+
+        user.save(function(err) {
+            if (err) {
+                res.status(404).end();
+            } else {
+                res.status(200).end();
+            }
+        });
+    });
+
     http.get(prefix+'users', passport.authenticate('local', {session: false}), function(req, res) {
             // var userQuery = validator.escape(req.query.id);
             var userQuery = req.query.id;
