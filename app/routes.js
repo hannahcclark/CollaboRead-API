@@ -69,7 +69,7 @@ module.exports = function(http, ws) {
                 });
 
             } else {
-                User.findOne({"userID":userQuery}, function(err, userID) {
+                User.findOne({"_id":userQuery}, function(err, userID) {
                     if (err) {
                         reportError(404, err, res);
                     } else {
@@ -89,7 +89,7 @@ module.exports = function(http, ws) {
             });
 
         } else {
-            User.findOne({"type":"lecturer", "userID":lecturerQuery}, function(err, userID) {
+            User.findOne({"type":"lecturer", "_id":lecturerQuery}, function(err, userID) {
                 if (err) {
                     reportError(404, error, res);
                 } else {
@@ -102,7 +102,7 @@ module.exports = function(http, ws) {
     http.post(prefix+'usercheck', bodyParserURLEncoded, passport.authenticate('local', {session: false}), function(req, res) {
         var users = req.body.users ? JSON.parse(req.body.users) : null;
         if (users) {
-            User.find({"email": {$in: users}}, {"email": 1, "userID": 1, "name": 1, "_id": 0}, function(err, userList) {
+            User.find({"email": {$in: users}}, {"email": 1, "name": 1, "_id": 1}, function(err, userList) {
                 if (!err) {
                     res.send(userList);
                 } else {
