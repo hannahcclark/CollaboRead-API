@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var bcrypt = require('bcrypt');
 
 var userSchema = mongoose.Schema({
     name    : String,
@@ -12,7 +13,7 @@ var userSchema = mongoose.Schema({
 });
 
 userSchema.methods.validPassword = function(pass) {
-    return (this.password == pass);
+    return bcrypt.compareSync(pass, this.password);
 };
 
 module.exports = mongoose.model('User', userSchema);

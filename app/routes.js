@@ -2,6 +2,7 @@ var bodyParser = require('body-parser');
 var bodyParserURLEncoded = bodyParser.urlencoded({extended: true});
 
 var validator = require('validator');
+var bcrypt = require('bcrypt');
 
 var User = require('../app/models/user');
 var CaseSets = require('../app/models/caseSets');
@@ -67,7 +68,7 @@ module.exports = function(http, ws) {
             "year": req.body.year,
             "picture": req.body.picture,
             "email": req.body.email,
-            "password": req.body.password,
+            "password": bcrypt.hashSync(req.body.password,10),
             "caseSets": []
         });
 
