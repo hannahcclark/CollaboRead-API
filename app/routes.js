@@ -171,6 +171,7 @@ module.exports = function(http, ws) {
         var setID = req.body.setID;
         var caseID = req.body.caseID;
         var owners = req.body.owners;
+        var answerName = req.body.answerName;
 
         //rename this shit
         var answerData = req.body.drawings;
@@ -185,6 +186,7 @@ module.exports = function(http, ws) {
 
                     var answer = {
                         "owners": JSON.parse(owners),
+                        "answerName": answerName,
                         "drawings": JSON.parse(answerData),
                         "submissionDate": (new Date()).getTime()
                     }
@@ -204,6 +206,7 @@ module.exports = function(http, ws) {
                                 if (submissionOwners === answerOwners) {
                                     resubmission = true;
                                     caseSet["cases"][c]["answers"][a].drawings = answer.drawings;
+                                    caseSet["cases"][c]["answers"][a].answerName = answer.answerName;
                                     caseSet["cases"][c]["answers"][a].submissionDate = (new Date()).getTime();
                                     break;
                                 }

@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var Answer = mongoose.Schema({
     answerID        : String,
     owners          : [String],
+    answerName      : String,
     drawings        : [{
         scanID  : String,
         sliceID : String,
