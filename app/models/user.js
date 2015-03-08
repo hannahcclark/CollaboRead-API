@@ -9,7 +9,10 @@ var userSchema = mongoose.Schema({
     picture : String,
     email   : String,
     password: String,
-    caseSets: [String]
+    caseSets: [String],
+    verified: Boolean,
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 });
 
 userSchema.methods.validPassword = function(pass) {

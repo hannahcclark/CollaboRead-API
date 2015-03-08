@@ -1,8 +1,14 @@
+var async = require('async');
+
 var bodyParser = require('body-parser');
 var bodyParserURLEncoded = bodyParser.urlencoded({extended: true});
 
 var validator = require('validator');
 var bcrypt = require('bcrypt');
+var crypto = require('crypto');
+
+var nodemailer = require('nodemailer');
+var markdown = require('nodemailer-markdown').markdown;
 
 var User = require('../app/models/user');
 var CaseSets = require('../app/models/caseSets');
@@ -31,10 +37,25 @@ passport.use(new LocalStrategy({
                 return done(null, false, {message: 'Incorrect password.'});
             }
 
+            if (!user.verified) {
+                return done(null, false, {message: 'Account unverified'});
+            }
+
             return done(null, user);
         });
     }
 ));
+
+// temporary gmail account
+var mailTransporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.CR_EMAIL_ADDRESS,
+        pass: process.env.CR_EMAIL_PASSWORD
+    }
+});
+
+mailTransporter.use('compile', markdown());
 
 function reportError(status, error, response) {
     console.log(error)
@@ -60,23 +81,118 @@ module.exports = function(http, ws) {
         });
     });
 
+    // Need to add validations and check for duplicate registrations
+    // Should replace registered users that aren't validated
     http.post(prefix+'register', bodyParserURLEncoded, function(req, res) {
-        var user = new User({
-            "name": req.body.name,
-            "type": req.body.type,
-            "title": req.body.title,
-            "year": req.body.year,
-            "picture": req.body.picture,
-            "email": req.body.email,
-            "password": bcrypt.hashSync(req.body.password,10),
-            "caseSets": []
-        });
 
-        user.save(function(err) {
-            if (err) {
+        async.waterfall([
+
+            function(done) {
+                crypto.randomBytes(20, function(err, buf) {
+                    var token = buf.toString('hex');
+                    done(err, token);
+                });
+            },
+
+            function(token, done) {
+
+                User.findOne({'email': req.body.email}, function(err, existingUser) {
+
+                    // User is already registered
+                    if (existingUser && existingUser.verified) {
+                        res.status(404).end();
+                    } else {
+
+                        // User has tried to register before but never verified account
+                        if (existingUser) {
+                            existingUser.name = req.body.name;
+                            existingUser.type = req.body.type;
+                            existingUser.title = req.body.title;
+                            existingUser.year = req.body.year;
+                            existingUser.picture = req.body.picture;
+                            existingUser.email = req.body.email;
+                            existingUser.password = bcrypt.hashSync(req.body.password,10);
+                            existingUser.caseSets = [];
+                            existingUser.verified = false;
+                            existingUser.resetPasswordToken= token;
+                            existingUser.resetPasswordExpires = Date.now() + 3600000;
+
+                            existingUser.save(function(err) {
+                                if (err) {
+                                    res.status(404).end();
+                                } else {
+                                    done(err, token, existingUser);
+                                }
+                            })
+
+                        // New user
+                        } else {
+                            var user = new User({
+                                "name": req.body.name,
+                                "type": req.body.type,
+                                "title": req.body.title,
+                                "year": req.body.year,
+                                "picture": req.body.picture,
+                                "email": req.body.email,
+                                "password": bcrypt.hashSync(req.body.password,10),
+                                "caseSets": [],
+                                "verified": false,
+                                "resetPasswordToken": token,
+                                "resetPasswordExpires": Date.now() + 3600000 //1 hour
+                            });
+
+                            user.save(function(err) {
+                                if (err) {
+                                    res.status(404).end();
+                                } else {
+                                    done(err, token, user);
+                                }
+                            });
+                        }
+                    }
+                });
+
+            },
+
+            function(token, user, done) {
+                var validationLink = "http://collaboread.herokuapp.com/api/v1/validate/"+token;
+                var emailBody = "#Thanks for registering with CollaboRead\n---\n\n";
+                emailBody += "Please visit the following link to begin using your account:\n\n";
+                emailBody += "<a href="+validationLink+">"+validationLink+"</a>\n\nThanks,\n\nCollaboRead";
+
+                var mailTest = {
+                    from: 'CollaboRead <admin@collaboread.org>',
+                    to: user.email,
+                    subject: 'Verify Your Account',
+                    markdown: emailBody
+                }
+
+                mailTransporter.sendMail(mailTest, function(err, info) {
+                    if (err) {
+                        console.log(err);
+                        res.status(404).end();
+                    } else {
+                        console.log('Message sent: ' + info.response);
+                        res.status(200).end();
+                    }
+                });
+            }
+        ]);
+    });
+
+    http.get(prefix+'validate/:token', function(req, res) {
+        User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: {$gt: Date.now()}}, function(err, user) {
+            // Expired or invalid token
+            if (!user) {
                 res.status(404).end();
             } else {
-                res.status(200).end();
+                user.resetPasswordToken = undefined;
+                user.resetPasswordExpires = undefined;
+                user.verified = true;
+
+                user.save(function(err) {
+                    res.status(200).end();
+                });
             }
         });
     });
