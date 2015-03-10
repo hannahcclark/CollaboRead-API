@@ -160,14 +160,14 @@ module.exports = function(http, ws) {
                 emailBody += "Please visit the following link to begin using your account:\n\n";
                 emailBody += "<a href="+validationLink+">"+validationLink+"</a>\n\nThanks,\n\nCollaboRead";
 
-                var mailTest = {
+                var mail = {
                     from: 'CollaboRead <admin@collaboread.org>',
                     to: user.email,
                     subject: 'Verify Your Account',
                     markdown: emailBody
                 }
 
-                mailTransporter.sendMail(mailTest, function(err, info) {
+                mailTransporter.sendMail(mail, function(err, info) {
                     if (err) {
                         console.log(err);
                         res.status(404).end();
@@ -178,6 +178,96 @@ module.exports = function(http, ws) {
                 });
             }
         ]);
+    });
+
+    http.post(prefix+'forgot', bodyParserURLEncoded, function(req, res) {
+
+        async.waterfall([
+
+            function(done) {
+                crypto.randomBytes(20, function(err, buf) {
+                    var token = buf.toString('hex');
+                    done(err, token);
+                });
+            },
+
+            function(token, done) {
+                var email = req.body.email;
+
+                User.findOne({email: email}, function(err, user) {
+                    if (user && !err) {
+                        done(err, token, user);
+                    } else {
+                        res.status(404).end();
+                    }
+                });
+            },
+
+            function(token, user, done) {
+                user.resetPasswordToken = token;
+                user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+                user.save(function(err) {
+                    var validationLink = "http://collaboread.herokuapp.com/api/v1/reset/"+token;
+                    var emailBody = "#Password Reset\n---\n\n";
+                    emailBody += "You are receiving this email because a password reset request was issued for the ";
+                    emailBody += "account associated with this email address. If you did not issue this request, you ";
+                    emailBody += "do not have to do anything. If you wish to reset your password, please visit the following link:\n\n";
+                    emailBody += "<a href="+validationLink+">"+validationLink+"</a>\n\nThanks,\n\nCollaboRead";
+
+                    var mail = {
+                        from: 'CollaboRead <admin@collaboread.org>',
+                        to: user.email,
+                        subject: 'Password Reset',
+                        markdown: emailBody
+                    }
+
+                    mailTransporter.sendMail(mail, function(err, info) {
+                        if (err) {
+                            console.log(err);
+                            res.status(404).end();
+                        } else {
+                            console.log('Message sent: ' + info.response);
+                            res.status(200).end();
+                        }
+                    });
+                });
+            }
+        ]);
+    });
+
+    http.get(prefix+'reset/:token', function(req, res) {
+        User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: {$gt: Date.now()}}, function(err, user) {
+            // Expired or invalid token
+            if (!user) {
+                res.status(404).end();
+            } else {
+                // placeholder UI
+                var body = "<html><head><title>Reset CollaboRead Password</title></head>";
+                body += "<body><p><strong>Reset password</strong><p>";
+                body += "<form id='resetPass' action='"+prefix+"reset' method='POST'>";
+                body += "<input type='password' placeholder='Password' name='password'/>";
+                body += "<input type='password' placeholder='Confirm Password' name='confirmpassword'/>";
+                body += "<input type='hidden' name='token' value='"+req.params.token+"'/>";
+                body += "<input type='Submit'/></form></body></html>";
+                res.send(body);
+            }
+        });
+    });
+
+    http.post(prefix+'reset', bodyParserURLEncoded, function(req, res) {
+        User.findOne({ resetPasswordToken: req.body.token, resetPasswordExpires: {$gt: Date.now()}}, function(err, user) {
+            user.password = bcrypt.hashSync(req.body.password,10);
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+            user.save(function(err) {
+                if (err) {
+                    res.status(404).end();
+                } else {
+                    res.send("Success");
+                }
+            });
+        });
     });
 
     http.get(prefix+'validate/:token', function(req, res) {
