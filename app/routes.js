@@ -73,6 +73,10 @@ module.exports = function(http, ws) {
     http.use(passport.initialize());
     http.use(passport.session());
 
+    http.get('/', function(req, res) {
+        res.render('index');
+    });
+
 // http routes
 
     http.post(prefix+'login', bodyParserURLEncoded, passport.authenticate('local', {session: false}), function(req, res) {
@@ -287,7 +291,7 @@ module.exports = function(http, ws) {
         });
     });
 
-    http.get(prefix+'users', passport.authenticate('local', {session: false}), function(req, res) {
+    http.get(prefix+'users', /*passport.authenticate('local', {session: false}),*/ function(req, res) {
             // var userQuery = validator.escape(req.query.id);
             var userQuery = req.query.id;
 
