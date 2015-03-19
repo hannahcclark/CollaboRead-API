@@ -1,8 +1,13 @@
+#navbar {
+    margin-left: 200px;
+}
+
 .navbar {
     z-index: 0;
     color: #FFFFFF;
     background-color: #6EBB99;
     border-bottom-color: #6EBB99;
+    width: auto;
 }
 
 .navbar-button {
