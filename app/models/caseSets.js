@@ -39,6 +39,7 @@ var Case = mongoose.Schema({
 var caseSetSchema = mongoose.Schema({
     setID   : String,
     owners  : [String],
+    name    : String,
     cases   : [Case]
 }, {collection: 'caseSets'});
 

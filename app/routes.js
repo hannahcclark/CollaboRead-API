@@ -74,7 +74,13 @@ module.exports = function(http, ws) {
     http.use(passport.session());
 
     http.get('/', function(req, res) {
-        res.render('index');
+        CaseSets.find({"owners": "54f66e8e6771f0152095515a"}, function(err, caseSets) {
+            if (err) {
+                reportError(404, err, res);
+            } else {
+                res.render('selector', {lectures: caseSets});
+            }
+        });
     });
 
 // http routes
