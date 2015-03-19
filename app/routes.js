@@ -352,7 +352,7 @@ module.exports = function(http, ws) {
         }
     });
 
-    http.get(prefix+'casesets', passport.authenticate('local', {session: false}), function(req, res) {
+    http.get(prefix+'casesets',/* passport.authenticate('local', {session: false}), */function(req, res) {
         // var setID = validator.escape(req.query.id);
         // var lecturerID = validator.escape(req.query.lecturerID);
         var setID = req.query.id;
