@@ -1,3 +1,15 @@
 .navbar {
     z-index: 0;
+    color: #FFFFFF;
+    background-color: #6EBB99;
+    border-bottom-color: #6EBB99;
+}
+
+.navbar-button {
+    color: #FFFFFF;
+}
+
+ul.topnav a:hover {
+    background-color: #74c99f !important;
+    color: #FFFFFF;
 }

@@ -8,5 +8,21 @@ html, body, .container-fluid, .row {
     left: 0;
     bottom: 0;
     z-index: 1000;
+    width: 200px;
     display: block;
+    color: #FFFFFF;
+    background-color: #3C4A5F;
+}
+
+.sidebar-header {
+    text-align: center;
+}
+
+h3.sidebar-header {
+    font-weight: lighter;
+}
+
+ul.nav-sidebar a {
+    color: #FFFFFF;
+    background-color: #313C4F;
 }
