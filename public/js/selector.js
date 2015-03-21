@@ -1,18 +1,19 @@
 var selectorView = {
 
     data: [],
-    selectorScreen: "cases",
+    selectorScreen: "lectures",
     title: "All Lectures",
 
     populateUIWithData: function(data) {
 
-        this.data = data;
-
+        selectorView.data = data;
         $("#selectorTitle").html(selectorView.title);
+
+        $("#itemGrid").html("");
 
         for (var i in data) {
 
-            var selectorBlock = $("<div>", {id: "block"+i, class: "selector-block"});
+            var selectorBlock = $("<div>", {id: i+"_"+data[i]["_id"], class: "selector-block"});
 
             var blockImage;
             var blockTitle;
@@ -41,6 +42,8 @@ var selectorView = {
 
             $("#itemGrid").append(column);
         }
+
+        frontEnd.updateEvents();
     },
 
     showAllLectures: function() {
