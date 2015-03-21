@@ -1,3 +1,3 @@
 module.exports = {
-    'url' : process.env.MONGOLAB_URI || "mongodb://admin:pass@ds049641.mongolab.com:49641/collaboread_dev3"
+    'url' : process.env.MONGOLAB_URI || "mongodb://admin:password@ds039880.mongolab.com:39880/collaboread_dev4"
 };

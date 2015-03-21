@@ -1,0 +1,26 @@
+.selector-block {
+    background-color: #F2F2F2;
+    box-shadow: 0px 2px 5px #AAAAAA;
+    margin-bottom: 15px;
+    width: 182px;
+    height: 210px;
+}
+
+div.selector-block-top {
+    width: 182px;
+    height: 150px;
+    overflow: hidden;
+}
+
+img.selector-block-top {
+    height: auto;
+    width: 182px;
+}
+
+div.selector-block-bottom {
+    padding: 5px;
+}
+
+.selector-block-title {
+    font-weight: bold;
+}

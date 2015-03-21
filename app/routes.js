@@ -11,7 +11,8 @@ var nodemailer = require('nodemailer');
 var markdown = require('nodemailer-markdown').markdown;
 
 var User = require('../app/models/user');
-var CaseSets = require('../app/models/caseSets');
+var Lectures = require('../app/models/caseSets');
+var Cases = require('../app/models/case');
 
 var prefix = "/api/v1/"
 
@@ -74,13 +75,7 @@ module.exports = function(http, ws) {
     http.use(passport.session());
 
     http.get('/', function(req, res) {
-        CaseSets.find({"owners": "54f66e8e6771f0152095515a"}, function(err, caseSets) {
-            if (err) {
-                reportError(404, err, res);
-            } else {
-                res.render('selector', {lectures: caseSets});
-            }
-        });
+        res.render('selector');
     });
 
 // http routes
@@ -352,30 +347,73 @@ module.exports = function(http, ws) {
         }
     });
 
-    http.get(prefix+'casesets',/* passport.authenticate('local', {session: false}), */function(req, res) {
-        // var setID = validator.escape(req.query.id);
-        // var lecturerID = validator.escape(req.query.lecturerID);
-        var setID = req.query.id;
-        var lecturerID = req.query.lecturerID;
+    // http.get(prefix+'casesets',/* passport.authenticate('local', {session: false}), */function(req, res) {
+    //     // var setID = validator.escape(req.query.id);
+    //     // var lecturerID = validator.escape(req.query.lecturerID);
+    //     var setID = req.query.id;
+    //     var lecturerID = req.query.lecturerID;
+    //
+    //     if (setID) {
+    //         CaseSets.findOne({"setID": setID}, function(err, caseSet) {
+    //             if (err) {
+    //                 reportError(404, err, res);
+    //             } else {
+    //                 res.send(caseSet);
+    //             }
+    //         });
+    //     } else if (lecturerID) {
+    //         CaseSets.find({"owners": lecturerID}, function(err, caseSets) {
+    //             if (err) {
+    //                 reportError(404, err, res);
+    //             } else {
+    //                 res.send(caseSets);
+    //             }
+    //         });
+    //     } else {
+    //         reportError(404, "No query specified", res);
+    //     }
+    // });
 
-        if (setID) {
-            CaseSets.findOne({"setID": setID}, function(err, caseSet) {
-                if (err) {
-                    reportError(404, err, res);
-                } else {
-                    res.send(caseSet);
+    http.get(prefix+'lectures', function(req, res) {
+        Lectures.find({}, function(err, lectures) {
+            res.send(lectures);
+        });
+    });
+
+    http.get(prefix+'cases', function(req, res) {
+
+        var caseID = req.query.id;
+        var lectureID = req.query.lectureID;
+
+        if (caseID) {
+
+        } else if (lectureID) {
+
+            async.waterfall([
+
+                function(done) {
+                    Lectures.findOne({"_id": lectureID}, function(err, lecture) {
+                        done(err, lecture);
+                    });
+                },
+
+                function(lecture, done) {
+
+                    var caseRetriever = function(caseID, callback) {
+                        Cases.findOne({"_id": caseID}, function(err, retrievedCase) {
+                            callback(err, retrievedCase);
+                        });
+                    }
+
+                    async.map(lecture.cases, caseRetriever, function(err, cases) {
+                        res.send(cases);
+                    });
                 }
-            });
-        } else if (lecturerID) {
-            CaseSets.find({"owners": lecturerID}, function(err, caseSets) {
-                if (err) {
-                    reportError(404, err, res);
-                } else {
-                    res.send(caseSets);
-                }
-            });
+
+            ]);
+
         } else {
-            reportError(404, "No query specified", res);
+            res.status(404).end();
         }
     });
 
