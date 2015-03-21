@@ -24,3 +24,7 @@ div.selector-block-bottom {
 .selector-block-title {
     font-weight: bold;
 }
+
+#patientHistory {
+    display: none;
+}

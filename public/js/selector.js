@@ -26,9 +26,15 @@ var selectorView = {
                 var blockTitle = itr[i].name;
                 var blockCaseCount = itr[i].scans.length;
 
+                $("#patientHistory").css("display", "none");
+                $("#patientHistoryDescription").empty();
+
             } else if (selectorView.selectorScreen == "case") {
                 var blockImage = itr[i].slices[0].url;
                 var blockTitle = itr[i].name;
+
+                $("#patientHistory").css("display", "block");
+                $("#patientHistoryDescription").html(data.patientInfo);
             }
 
             var selectorBlock = $("<div>", {id: blockTitle+"&"+itr[i]["_id"], class: "selector-block"});
