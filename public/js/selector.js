@@ -21,8 +21,6 @@ var selectorView = {
 
         for (var i in itr) {
 
-            var selectorBlock = $("<div>", {id: i+"_"+itr[i]["_id"], class: "selector-block"});
-
             if (selectorView.selectorScreen == "caseList") {
                 var blockImage = itr[i].scans[0].slices[0].url;
                 var blockTitle = itr[i].name;
@@ -32,6 +30,8 @@ var selectorView = {
                 var blockImage = itr[i].slices[0].url;
                 var blockTitle = itr[i].name;
             }
+
+            var selectorBlock = $("<div>", {id: blockTitle+"&"+itr[i]["_id"], class: "selector-block"});
 
             var selectorBlockTop = "<div class='selector-block-top'><img src='"+blockImage+"' class='selector-block-top'/></div>";
 
@@ -66,9 +66,9 @@ var selectorView = {
         APIClientService.retrieveCasesForLecture(lecture, this.populateUIWithData);
     },
 
-    showCase: function(caseID) {
+    showCase: function(caseID, caseName) {
         selectorView.selectorScreen = "case";
-        selectorView.title = "case test";
+        selectorView.title = caseName;
         APIClientService.retrieveCaseWithID(caseID, this.populateUIWithData);
     }
 }
