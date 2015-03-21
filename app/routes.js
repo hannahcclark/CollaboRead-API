@@ -384,6 +384,7 @@ module.exports = function(http, ws) {
 
         var lectureOwnerID = req.query.lectureOwnerID;
         var lectureID = req.query.lectureID;
+        var caseID = req.query.caseID;
 
         if (lectureOwnerID) {
             Cases.find({"owners": lectureOwnerID}, function(err, cases) {
@@ -414,6 +415,12 @@ module.exports = function(http, ws) {
                 }
 
             ]);
+
+        } else if (caseID) {
+
+            Cases.findOne({"_id": caseID}, function(err, retrievedCase) {
+                res.send(retrievedCase);
+            });
 
         } else {
             res.status(404).end();

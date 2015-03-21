@@ -28,5 +28,15 @@ var APIClientService = {
                 cb(data);
             }
         });
+    },
+
+    retrieveCaseWithID: function(caseID, cb) {
+        $.ajax({
+            url: "http://localhost:5000/api/v1/cases?caseID="+caseID,
+            type: "GET",
+            success: function(data) {
+                cb(data);
+            }
+        });
     }
 };
