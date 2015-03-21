@@ -5,7 +5,11 @@ var sideBar = {
             $("#sidebar-lecture-list").empty();
 
             for (var i in data) {
-                $("#sidebar-lecture-list").append("<li><a href='#'>"+data[i].name+"</a></li>")
+
+                var lectureName = data[i].name;
+                var lectureID = data[i]["_id"];
+
+                $("#sidebar-lecture-list").append("<li class='lecture-selector' id="+i+"_"+lectureID+"><a href='#'>"+lectureName+"</a></li>")
             }
         });
     }

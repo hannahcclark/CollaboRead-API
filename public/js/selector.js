@@ -15,20 +15,9 @@ var selectorView = {
 
             var selectorBlock = $("<div>", {id: i+"_"+data[i]["_id"], class: "selector-block"});
 
-            var blockImage;
-            var blockTitle;
-            var blockCaseCount;
-
-            /*if (selectorView.selectorScreen == "lectures") {
-                // blockImage = data[i].cases[0].scans[0].slices[0].url;
-                blockTitle = data[i].name;
-                blockCaseCount = data[i].cases.length;
-
-            } else*/ if (selectorView.selectorScreen == "allCases") {
-                blockImage = data[i].scans[0].slices[0].url;
-                blockTitle = data[i].name;
-                blockCaseCount = data[i].scans.length;
-            }
+            var blockImage = data[i].scans[0].slices[0].url;
+            var blockTitle = data[i].name;
+            var blockCaseCount = data[i].scans.length;
 
             var selectorBlockTop = "<div class='selector-block-top'><img src='"+blockImage+"' class='selector-block-top'/></div>";
 
@@ -54,7 +43,7 @@ var selectorView = {
     },
 
     showCasesForLecture: function(lecture, lectureName) {
-        selectorView.selectorScreen = "cases";
+        selectorView.selectorScreen = "lecture";
         selectorView.title = lectureName;
         APIClientService.retrieveCasesForLecture(lecture, this.populateUIWithData);
     }
