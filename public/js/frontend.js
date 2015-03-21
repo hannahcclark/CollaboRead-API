@@ -1,5 +1,6 @@
 function init() {
-    selectorView.showAllLectures();
+    selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
+    sideBar.updateLectureList("54f66e8e6771f0152095515a");
 }
 
 var frontEnd = {

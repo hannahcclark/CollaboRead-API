@@ -1,8 +1,8 @@
 var selectorView = {
 
     data: [],
-    selectorScreen: "lectures",
-    title: "All Lectures",
+    selectorScreen: "allCases",
+    title: "All Cases",
 
     populateUIWithData: function(data) {
 
@@ -19,12 +19,12 @@ var selectorView = {
             var blockTitle;
             var blockCaseCount;
 
-            if (selectorView.selectorScreen == "lectures") {
+            /*if (selectorView.selectorScreen == "lectures") {
                 // blockImage = data[i].cases[0].scans[0].slices[0].url;
                 blockTitle = data[i].name;
                 blockCaseCount = data[i].cases.length;
 
-            } else if (selectorView.selectorScreen == "cases") {
+            } else*/ if (selectorView.selectorScreen == "allCases") {
                 blockImage = data[i].scans[0].slices[0].url;
                 blockTitle = data[i].name;
                 blockCaseCount = data[i].scans.length;
@@ -46,10 +46,11 @@ var selectorView = {
         frontEnd.updateEvents();
     },
 
-    showAllLectures: function() {
-        selectorView.selectorScreen = "lectures";
-        selectorView.title = "All Lectures";
-        APIClientService.retrieveLectures(this.populateUIWithData);
+    showAllCasesForLecturer: function(lecturer) {
+        selectorView.selectorScreen = "allCases";
+        selectorView.title = "All Cases";
+        APIClientService.retrieveCasesForLectureOwner(lecturer, this.populateUIWithData);
+        // APIClientService.retrieveLectures(this.populateUIWithData);
     },
 
     showCasesForLecture: function(lecture, lectureName) {

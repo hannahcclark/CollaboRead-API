@@ -17,7 +17,8 @@ var Case = mongoose.Schema({
     name    : String,
     scans: [Scan],
     // answers: [Answer],
-    patientInfo: String
+    patientInfo: String,
+    owners  : [String]
 }, {collection: 'cases'});
 
 module.exports = mongoose.model('case', Case);

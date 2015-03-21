@@ -382,10 +382,13 @@ module.exports = function(http, ws) {
 
     http.get(prefix+'cases', function(req, res) {
 
-        var caseID = req.query.id;
+        var lectureOwnerID = req.query.lectureOwnerID;
         var lectureID = req.query.lectureID;
 
-        if (caseID) {
+        if (lectureOwnerID) {
+            Cases.find({"owners": lectureOwnerID}, function(err, cases) {
+                res.send(cases);
+            });
 
         } else if (lectureID) {
 
