@@ -6,6 +6,9 @@ function init() {
 var frontEnd = {
 
     updateEvents: function() {
+
+        $("*").unbind('click');
+
         $(".selector-block").click(function() {
             if (selectorView.selectorScreen == "caseList") {
 
