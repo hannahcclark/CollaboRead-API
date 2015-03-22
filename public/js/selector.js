@@ -3,11 +3,20 @@ var selectorView = {
     data: [],
     selectorScreen: "caseList",
     title: "All Cases",
+    breadCrumbs: [],
 
     populateUIWithData: function(data) {
 
         selectorView.data = data;
-        $("#selectorTitle").html(selectorView.title);
+        $("#selectorTitle").empty();
+
+        for (var i in selectorView.breadCrumbs) {
+            if (i == 0) {
+                $("#selectorTitle").html(selectorView.breadCrumbs[i]);
+            } else {
+                $("#selectorTitle").append(" > "+selectorView.breadCrumbs[i])
+            }
+        }
 
         $("#itemGrid").empty();
 
@@ -63,18 +72,21 @@ var selectorView = {
     showAllCasesForLecturer: function(lecturer) {
         selectorView.selectorScreen = "caseList";
         selectorView.title = "All Cases";
+        selectorView.breadCrumbs = [selectorView.title];
         APIClientService.retrieveCasesForLectureOwner(lecturer, this.populateUIWithData);
     },
 
     showCasesForLecture: function(lecture, lectureName) {
         selectorView.selectorScreen = "caseList";
         selectorView.title = lectureName;
+        selectorView.breadCrumbs = [selectorView.title];
         APIClientService.retrieveCasesForLecture(lecture, this.populateUIWithData);
     },
 
     showCase: function(caseID, caseName) {
         selectorView.selectorScreen = "case";
         selectorView.title = caseName;
+        selectorView.breadCrumbs.push(selectorView.title);
         APIClientService.retrieveCaseWithID(caseID, this.populateUIWithData);
     }
 }
