@@ -28,6 +28,10 @@ var frontEnd = {
             var lectureIndex = parseInt(this.id.substring(0,1));
             selectorView.showCasesForLecture(caseID, this.innerText);
         });
+
+        $("#sidebar-new-lecture").click(function() {
+            creator.showCreateLectureModal();
+        });
     }
 
 }

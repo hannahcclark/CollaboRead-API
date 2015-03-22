@@ -380,6 +380,25 @@ module.exports = function(http, ws) {
         });
     });
 
+    http.put(prefix+'lectures', bodyParserURLEncoded, function(req, res) {
+        var lectureName = req.body.name;
+        var lectureOwner = req.body.owner;
+
+        var lecture = new Lectures({
+            "name": lectureName,
+            "owners": [lectureOwner],
+            "cases": []
+        });
+
+        lecture.save(function(err) {
+            if (err) {
+                res.status(404).end();
+            } else {
+                res.status(200).end();
+            }
+        });
+    })
+
     http.get(prefix+'cases', function(req, res) {
 
         var lectureOwnerID = req.query.lectureOwnerID;

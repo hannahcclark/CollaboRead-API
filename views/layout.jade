@@ -12,6 +12,7 @@ html
         script(src='/js/frontend.js')
         script(src='/js/sideBar.js')
         script(src='/js/selector.js')
+        script(src='/js/creator.js')
     body(onload="init()")
         div(class="container-fluid")
             div(class="row")
@@ -19,4 +20,5 @@ html
                     include sidebar
                 div(class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main")
                     include navbar
+                    include creator
                     block selector

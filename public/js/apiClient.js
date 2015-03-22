@@ -1,5 +1,7 @@
 var APIClientService = {
 
+// retrieval methods
+
     retrieveLecturesForLectureOwner: function(lecturer, cb) {
         $.ajax ({
             url: "http://localhost:5000/api/v1/lectures",
@@ -38,5 +40,22 @@ var APIClientService = {
                 cb(data);
             }
         });
+    },
+
+// creation methods
+
+    createLecture: function(name, ownerID, cb) {
+        $.ajax({
+            url: "http://localhost:5000/api/v1/lectures",
+            type: "PUT",
+            data: "name="+name+"&owner="+ownerID,
+            success: function() {
+                cb();
+            },
+            error: function() {
+                console.error("creation failed");
+            }
+        })
     }
+
 };
