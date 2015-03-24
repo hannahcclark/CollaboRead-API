@@ -32,6 +32,10 @@ var frontEnd = {
         $("#sidebar-new-lecture").click(function() {
             creator.showCreateLectureModal();
         });
+
+        $("#addButton").click(function() {
+            creator.showCreateCaseModal(null);
+        });
     }
 
 }

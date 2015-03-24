@@ -1,18 +1,17 @@
 var mongoose = require('mongoose');
 
+var Slice = mongoose.Schema({
+    url: String,
+    hasDrawing: Boolean
+});
+
 var Scan = mongoose.Schema({
-    scanID  : String,
     name    : String,
     hasDrawing  : Boolean,
-    slices: [{
-        sliceID: String,
-        url: String,
-        hasDrawing: Boolean
-    }]
+    slices: [Slice]
 });
 
 var Case = mongoose.Schema({
-    caseID  : String,
     date    : Date,
     name    : String,
     scans: [Scan],

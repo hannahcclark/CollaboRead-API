@@ -55,7 +55,21 @@ var APIClientService = {
             error: function() {
                 console.error("creation failed");
             }
-        })
+        });
+    },
+
+    createCase: function(data, lecture, cb) {
+        $.ajax({
+            url: "http://localhost:5000/api/v1/cases",
+            type: "PUT",
+            data: data,
+            success: function() {
+                cb();
+            },
+            error: function() {
+                console.error("creation failed");
+            }
+        });
     }
 
 };

@@ -13,6 +13,8 @@ var markdown = require('nodemailer-markdown').markdown;
 var User = require('../app/models/user');
 var Lectures = require('../app/models/caseSets');
 var Cases = require('../app/models/case');
+var Scan = require('../app/models/scan');
+var Slice = require('../app/models/slice');
 
 var prefix = "/api/v1/"
 
@@ -444,6 +446,59 @@ module.exports = function(http, ws) {
         } else {
             res.status(404).end();
         }
+    });
+
+    http.put(prefix+'cases', bodyParserURLEncoded, function(req, res) {
+
+        // var lectureID = req.query.lectureID;
+        var data = req.body;
+        // var caseName = req.query.name;
+        // var scans = req.query.scans;
+        // var patientInfo = req.query.patientInfo;
+        // var owner = req.query.owner;
+
+        var sliceCreator = function(slice, cb) {
+            var newSlice = new Slice({
+                "url": slice["url"],
+                "hasDrawing": slice["hasDrawing"]
+            });
+
+            cb(null, newSlice);
+        };
+
+        var scanCreator = function(scan, cb) {
+            async.map(scan["slices"], sliceCreator, function(err, slices) {
+
+                var newScan = new Scan({
+                    "name": scan["name"],
+                    "hasDrawing": scan["hasDrawing"],
+                    "slices": slices
+                });
+
+                cb(null, newScan);
+            });
+        };
+
+        async.map(data["scans"], scanCreator, function(err, scans) {
+            // console.log(scans);
+            var newCase = new Cases({
+                "date": (new Date()).getTime(),
+                "name": data["name"],
+                "patientInfo": data["patientInfo"],
+                "owners": data["owners"],
+                "scans": scans
+            });
+
+            newCase.save(function(err) {
+                if (err) {
+                    console.log(err);
+                    res.status(404).end();
+                } else {
+                    res.status(200).end();
+                }
+            });
+        });
+
     });
 
     http.post(prefix+'submitanswer', bodyParserURLEncoded, passport.authenticate('local', {session: false}), function(req, res) {
