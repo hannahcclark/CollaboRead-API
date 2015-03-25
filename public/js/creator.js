@@ -28,7 +28,7 @@ var creator = {
 
     showCreateCaseModal: function(context) {
 
-        AWS.config.update({accessKeyId: 'AKIAIJFCXMACGVQPUFAQ', secretAccessKey: '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'});
+        console.error("aws key missing");
     	var bucket = new AWS.S3({params: {Bucket: 'collaboread'}});
 
         $("#creator-modal-title").html("Create New Case");
@@ -62,56 +62,71 @@ var creator = {
 
         $("#creator-modal-button-submit").click(function() {
 
-            var file = $("#scanFile0")[0].files[0];
+            var fileList = $("#scanFile0")[0].files;
 
-            if (file) {
-                var fileName = "img/cases/54f66e8e6771f0152095515a" + "/" + $("#nameField").val() + "/" + $("#scanName0").val() + "/" + file.name;
+            creator.uploadFiles(fileList, 0, bucket);
 
-                var params = {  Key: fileName,
-                                ContentType: file.type,
-                                Body: file,
-                                ACL: 'public-read'};
+            var fileURLList = [];
 
-                bucket.putObject(params, function (err, data) {
-
-                    if (!err) {
-
-                        var scanList = [];
-
-                        var sliceList = [];
-
-                        sliceList.push({
-                            "url": "http://s3.amazonaws.com/collaboread/"+fileName,
-                            "hasDrawing": false
-                        })
-
-                        var scan = {
-                            "name": $("#scanName0").val(),
-                            "hasDrawing": false,
-                            "slices": sliceList
-                        };
-
-                        scanList.push(scan);
-
-                        var caseData = {
-                            "name": $("#nameField").val(),
-                            "patientInfo": $("#patientInfoField").val(),
-                            "owners": ["54f66e8e6771f0152095515a"],
-                            "scans": scanList
-                        }
-
-                        APIClientService.createCase(caseData, null, function() {
-                            selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
-                            $("#creator-modal").modal("hide");
-                        });
-
-                    } else {
-                        console.error("error uploading file");
-                    }
-
-                });
+            for (var i = 0; i < fileList.length; i++) {
+                fileURLList.push("http://s3.amazonaws.com/collaboread/img/cases/54f66e8e6771f0152095515a" + "/" + $("#nameField").val() + "/" + $("#scanName0").val() + "/" + fileList[i].name);
             }
+
+            creator.createCaseObject(fileURLList);
         });
+    },
+
+    uploadFiles: function(fileList, index, bucket) {
+
+        var file = fileList[index];
+
+        var fileName = "img/cases/54f66e8e6771f0152095515a" + "/" + $("#nameField").val() + "/" + $("#scanName0").val() + "/" + file.name;
+
+        var params = {  Key: fileName,
+                        ContentType: file.type,
+                        Body: file,
+                        ACL: 'public-read'};
+
+        bucket.putObject(params, function(err, data) {
+             if (index < fileList.length - 1) {
+                creator.uploadFiles(fileList, index+1, bucket);
+            }
+            selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
+        });
+
+    },
+
+    createCaseObject: function(fileURLList) {
+        var scanList = [];
+        var sliceList = [];
+
+        for (var i in fileURLList) {
+            sliceList.push({
+                "url": fileURLList[i],
+                "hasDrawing": false
+            });
+        }
+
+        var scan = {
+            "name": $("#scanName0").val(),
+            "hasDrawing": false,
+            "slices": sliceList
+        };
+
+        scanList.push(scan);
+
+        var caseData = {
+            "name": $("#nameField").val(),
+            "patientInfo": $("#patientInfoField").val(),
+            "owners": ["54f66e8e6771f0152095515a"],
+            "scans": scanList
+        }
+
+        APIClientService.createCase(caseData, null, function() {
+            selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
+            $("#creator-modal").modal("hide");
+        });
+
     },
 
     createScanInput: function(index) {
