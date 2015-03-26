@@ -57,30 +57,48 @@ var creator = {
 
         form.append(scans);
 
+        var addNewScansLink = "<a href='#' id='addNewScansLink'>Add Scan</a>";
+
         $("#creator-modal-body").html(form);
+        $("#creator-modal-body").append(addNewScansLink);
+
+        $("#addNewScansLink").click(function() {
+            creator.caseScanCount++;
+            var newScan = creator.createScanInput(creator.caseScanCount);
+            $("#scansGroup").append(newScan);
+        });
+
         $("#creator-modal").modal("show");
 
         $("#creator-modal-button-submit").click(function() {
 
-            var fileList = $("#scanFile0")[0].files;
+            var scanURLList = [];
 
-            creator.uploadFiles(fileList, 0, bucket);
+            for (var scan = 0; scan <= creator.caseScanCount; scan++) {
 
-            var fileURLList = [];
+                var fileList = $("#scanFile"+scan)[0].files;
 
-            for (var i = 0; i < fileList.length; i++) {
-                fileURLList.push("http://s3.amazonaws.com/collaboread/img/cases/54f66e8e6771f0152095515a" + "/" + $("#nameField").val() + "/" + $("#scanName0").val() + "/" + fileList[i].name);
+                creator.uploadFiles(fileList, 0, scan, bucket);
+
+                var fileURLList = [];
+
+                for (var i = 0; i < fileList.length; i++) {
+                    fileURLList.push("http://s3.amazonaws.com/collaboread/img/cases/54f66e8e6771f0152095515a" + "/" + $("#nameField").val() + "/" + $("#scanName"+scan).val() + "/" + fileList[i].name);
+                }
+
+                scanURLList.push(fileURLList);
+
             }
 
-            creator.createCaseObject(fileURLList);
+            creator.createCaseObject(scanURLList);
         });
     },
 
-    uploadFiles: function(fileList, index, bucket) {
+    uploadFiles: function(fileList, index, scan, bucket) {
 
         var file = fileList[index];
 
-        var fileName = "img/cases/54f66e8e6771f0152095515a" + "/" + $("#nameField").val() + "/" + $("#scanName0").val() + "/" + file.name;
+        var fileName = "img/cases/54f66e8e6771f0152095515a" + "/" + $("#nameField").val() + "/" + $("#scanName"+scan).val() + "/" + file.name;
 
         var params = {  Key: fileName,
                         ContentType: file.type,
@@ -89,31 +107,37 @@ var creator = {
 
         bucket.putObject(params, function(err, data) {
              if (index < fileList.length - 1) {
-                creator.uploadFiles(fileList, index+1, bucket);
+                creator.uploadFiles(fileList, index+1, scan, bucket);
             }
             selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
         });
 
     },
 
-    createCaseObject: function(fileURLList) {
+    createCaseObject: function(scanURLList) {
+
         var scanList = [];
-        var sliceList = [];
 
-        for (var i in fileURLList) {
-            sliceList.push({
-                "url": fileURLList[i],
-                "hasDrawing": false
-            });
+        for (var j = 0; j < scanURLList.length; j++) {
+
+            var sliceList = [];
+            var fileURLList = scanURLList[j];
+
+            for (var i in fileURLList) {
+                sliceList.push({
+                    "url": fileURLList[i],
+                    "hasDrawing": false
+                });
+            }
+
+            var scan = {
+                "name": $("#scanName"+j).val(),
+                "hasDrawing": false,
+                "slices": sliceList
+            };
+
+            scanList.push(scan);
         }
-
-        var scan = {
-            "name": $("#scanName0").val(),
-            "hasDrawing": false,
-            "slices": sliceList
-        };
-
-        scanList.push(scan);
 
         var caseData = {
             "name": $("#nameField").val(),
