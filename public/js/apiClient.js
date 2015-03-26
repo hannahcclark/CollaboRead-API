@@ -58,7 +58,7 @@ var APIClientService = {
         });
     },
 
-    createCase: function(data, lecture, cb) {
+    createCase: function(data, cb) {
         $.ajax({
             url: "http://localhost:5000/api/v1/cases",
             type: "PUT",

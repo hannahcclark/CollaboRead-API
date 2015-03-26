@@ -450,7 +450,7 @@ module.exports = function(http, ws) {
 
     http.put(prefix+'cases', bodyParserURLEncoded, function(req, res) {
 
-        // var lectureID = req.query.lectureID;
+        var lectureID = req.body.lectureID;
         var data = req.body;
         // var caseName = req.query.name;
         // var scans = req.query.scans;
@@ -480,7 +480,7 @@ module.exports = function(http, ws) {
         };
 
         async.map(data["scans"], scanCreator, function(err, scans) {
-            // console.log(scans);
+
             var newCase = new Cases({
                 "date": (new Date()).getTime(),
                 "name": data["name"],
@@ -494,7 +494,26 @@ module.exports = function(http, ws) {
                     console.log(err);
                     res.status(404).end();
                 } else {
-                    res.status(200).end();
+
+                    if (lectureID) {
+                        Lectures.findOne({"_id": lectureID}, function(err, lecture) {
+
+                            lecture["cases"].push(newCase["_id"]);
+
+                            lecture.save(function(err) {
+                                if (err) {
+                                    console.log(err);
+                                    res.status(404).end();
+                                } else {
+                                    res.status(200).end();
+                                }
+                            })
+
+                        });
+
+                    } else {
+                        res.status(200).end();
+                    }
                 }
             });
         });

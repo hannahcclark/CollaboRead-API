@@ -3,6 +3,7 @@ var selectorView = {
     data: [],
     selectorScreen: "caseList",
     title: "All Cases",
+    lectureID: "0",
     breadCrumbs: [],
 
     populateUIWithData: function(data) {
@@ -72,6 +73,7 @@ var selectorView = {
     showAllCasesForLecturer: function(lecturer) {
         selectorView.selectorScreen = "caseList";
         selectorView.title = "All Cases";
+        selectorView.lectureID = 0;
         selectorView.breadCrumbs = [selectorView.title];
         APIClientService.retrieveCasesForLectureOwner(lecturer, this.populateUIWithData);
     },
@@ -79,6 +81,7 @@ var selectorView = {
     showCasesForLecture: function(lecture, lectureName) {
         selectorView.selectorScreen = "caseList";
         selectorView.title = lectureName;
+        selectorView.lectureID = lecture;
         selectorView.breadCrumbs = [selectorView.title];
         APIClientService.retrieveCasesForLecture(lecture, this.populateUIWithData);
     },
@@ -86,6 +89,7 @@ var selectorView = {
     showCase: function(caseID, caseName) {
         selectorView.selectorScreen = "case";
         selectorView.title = caseName;
+        selectorView.lectureID = 0;
         selectorView.breadCrumbs.push(selectorView.title);
         APIClientService.retrieveCaseWithID(caseID, this.populateUIWithData);
     }

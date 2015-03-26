@@ -31,7 +31,11 @@ var creator = {
         console.error("aws key missing");
     	var bucket = new AWS.S3({params: {Bucket: 'collaboread'}});
 
-        $("#creator-modal-title").html("Create New Case");
+        if (selectorView.lectureID == 0) {
+            $("#creator-modal-title").html("Create New Case");
+        } else {
+            $("#creator-modal-title").html("Add Case to "+selectorView.title);
+        }
         $("#creator-modal-button-submit").text("Create");
 
         var form = $("<form>");
@@ -146,7 +150,11 @@ var creator = {
             "scans": scanList
         }
 
-        APIClientService.createCase(caseData, null, function() {
+        if (selectorView.lectureID != 0) {
+            caseData["lectureID"] = selectorView.lectureID;
+        }
+
+        APIClientService.createCase(caseData, function() {
             selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
             $("#creator-modal").modal("hide");
         });
