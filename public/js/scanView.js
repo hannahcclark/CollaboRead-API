@@ -31,5 +31,10 @@ var scanView = {
             column.append(selectorBlock);
             $("#sliceSelector").append(column);
         }
+
+        $(".selector-block").click(function() {
+            $("#theater").empty();
+            $("#theater").html("<img id='theaterImage' src='"+scan["slices"][this.id]["url"]+"' />");
+        });
     }
 };
