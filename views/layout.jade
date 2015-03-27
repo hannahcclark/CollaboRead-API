@@ -6,6 +6,7 @@ html
         link(rel='stylesheet', href='/css/navbar.css')
         link(rel='stylesheet', href='/css/sidebar.css')
         link(rel='stylesheet', href='/css/selector.css')
+        link(rel='stylesheet', href='/css/scanView.css')
         script(src='http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
         script(src='/bootstrap/js/bootstrap.min.js')
         script(src='/js/aws-sdk.min.js')
@@ -13,6 +14,7 @@ html
         script(src='/js/frontend.js')
         script(src='/js/sideBar.js')
         script(src='/js/selector.js')
+        script(src='/js/scanView.js')
         script(src='/js/creator.js')
     body(onload="init()")
         div(class="container-fluid")
@@ -22,4 +24,5 @@ html
                 div(class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main")
                     include navbar
                     include creator
-                    block selector
+                    div(id="content")
+                        block selector

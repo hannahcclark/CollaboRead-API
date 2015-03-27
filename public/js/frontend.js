@@ -1,6 +1,10 @@
 function init() {
     selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
+    // APIClientService.retrieveCaseWithID("5514973dee5c691f05a67a20", function(retrievedCase) {
+    //     frontEnd.presentScanView(retrievedCase["scans"][1]);
+    // });
     sideBar.updateLectureList("54f66e8e6771f0152095515a");
+    frontEnd.updateEvents();
 }
 
 var frontEnd = {
@@ -16,6 +20,22 @@ var frontEnd = {
                 var caseName = this.id.substring(0, separatorIndex);
                 var caseID = this.id.substring(separatorIndex+1, this.id.length);
                 selectorView.showCase(caseID, caseName);
+
+            } else if (selectorView.selectorScreen == "case") {
+
+                var separatorIndex = this.id.indexOf("&");
+                var caseID = this.id.substring(separatorIndex+1, this.id.length);
+                var currentCase;
+
+                for (var i in selectorView.data["scans"]) {
+                    if (selectorView.data["scans"][i]["_id"] == caseID) {
+                        currentCase = selectorView.data["scans"][i];
+                        break;
+                    }
+                }
+
+                scanView.showScan(currentCase);
+
             }
         });
 
@@ -37,5 +57,11 @@ var frontEnd = {
             creator.showCreateCaseModal(null);
         });
     }
+    // },
+    //
+    // presentScanView: function(scan) {
+    //     // $("#content").empty();
+    //     scanView.showScan(scan);
+    // }
 
 }
