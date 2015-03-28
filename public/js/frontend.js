@@ -56,6 +56,14 @@ var frontEnd = {
         $("#addButton").click(function() {
             creator.showCreateCaseModal(null);
         });
+
+        $("#breadcrumb0").click(function() {
+            selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
+        });
+
+        $("#breadcrumb1").click(function() {
+            selectorView.showCase(selectorView.data["_id"], selectorView.data["name"]);
+        });
     }
     // },
     //

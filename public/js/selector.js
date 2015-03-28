@@ -13,9 +13,9 @@ var selectorView = {
 
         for (var i in selectorView.breadCrumbs) {
             if (i == 0) {
-                $("#selectorTitle").html(selectorView.breadCrumbs[i]);
-            } else {
-                $("#selectorTitle").append(" > "+selectorView.breadCrumbs[i])
+                $("#selectorTitle").html("<a href='#' id='breadcrumb"+i+"'>"+selectorView.breadCrumbs[i])+"</a>";
+            } else if (i == 1) {
+                $("#selectorTitle").append(" > <a href='#' id='breadcrumb"+i+"'>"+selectorView.breadCrumbs[i]+"</a>")
             }
         }
 
