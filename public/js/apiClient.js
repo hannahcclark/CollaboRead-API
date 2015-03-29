@@ -83,5 +83,16 @@ var APIClientService = {
                 cb();
             }
         });
+    },
+
+    editCaseTitle: function(caseID, caseTitle, cb) {
+        $.ajax({
+            url: "http://localhost:5000/api/v1/cases",
+            type: "POST",
+            data: "caseID="+caseID+"&caseTitle="+caseTitle,
+            success: function() {
+                cb();
+            }
+        });
     }
 };

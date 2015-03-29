@@ -191,6 +191,30 @@ var creator = {
                 $("#creator-modal").modal("hide");
             });
         });
+    },
+
+    showEditTitleForCase: function(caseID, caseTitle) {
+        $("#creator-modal-title").html("Edit Case Title");
+        $("#creator-modal-button-submit").text("Create");
+
+        var form = $("<form>");
+
+        var title = "<div class='form-group'>";
+        title += "<label for='titleField'>Case Title</label>";
+        title += "<input type='text' name='titleField' class='form-control' id='titleField' value='"+caseTitle+"' />";
+        title += "</div>";
+
+        form.append(title);
+
+        $("#creator-modal-body").html(form);
+        $("#creator-modal").modal("show");
+
+        $("#creator-modal-button-submit").click(function() {
+            APIClientService.editCaseTitle(caseID, $("#titleField").val(), function() {
+                selectorView.showCase(caseID, $("#titleField").val());
+                $("#creator-modal").modal("hide");
+            });
+        });
     }
 
 };

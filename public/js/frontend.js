@@ -66,14 +66,14 @@ var frontEnd = {
         });
 
         $("#editTitle").click(function() {
-            creator.showEditTitleForLecture(selectorView.lectureID, selectorView.breadCrumbs[0]);
+
+            if (selectorView.selectorScreen == "caseList") {
+                creator.showEditTitleForLecture(selectorView.lectureID, selectorView.breadCrumbs[0]);
+
+            } else if (selectorView.selectorScreen == "case") {
+                creator.showEditTitleForCase(selectorView.data["_id"], selectorView.data["name"]);
+            }
         });
     }
-    // },
-    //
-    // presentScanView: function(scan) {
-    //     // $("#content").empty();
-    //     scanView.showScan(scan);
-    // }
 
 }

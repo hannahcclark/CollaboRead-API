@@ -534,6 +534,20 @@ module.exports = function(http, ws) {
 
     });
 
+    http.post(prefix+'cases', bodyParserURLEncoded, function(req, res) {
+
+        var caseID = req.body.caseID;
+        var caseTitle = req.body.caseTitle;
+
+        Cases.update({"_id": caseID}, {"name": caseTitle}, function(err, numChanged) {
+            if (err) {
+                res.status(500).end();
+            } else {
+                res.status(200).end();
+            }
+        });
+    });
+
     http.post(prefix+'submitanswer', bodyParserURLEncoded, passport.authenticate('local', {session: false}), function(req, res) {
         // var setID = validator.escape(req.body.setID)
         // var caseID = validator.escape(req.body.caseID)
