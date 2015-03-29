@@ -399,7 +399,21 @@ module.exports = function(http, ws) {
                 res.status(200).end();
             }
         });
-    })
+    });
+
+    http.post(prefix+'lectures', bodyParserURLEncoded, function(req, res) {
+
+        var lectureID = req.body.lectureID;
+        var lectureTitle = req.body.lectureTitle;
+
+        Lectures.update({"_id": lectureID}, {"name": lectureTitle}, function(err, numChanged) {
+            if (err) {
+                res.status(500).end();
+            } else {
+                res.status(200).end();
+            }
+        });
+    });
 
     http.get(prefix+'cases', function(req, res) {
 

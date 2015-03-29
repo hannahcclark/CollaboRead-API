@@ -70,6 +70,18 @@ var APIClientService = {
                 console.error("creation failed");
             }
         });
-    }
+    },
 
+// edit methods
+
+    editLectureTitle: function(lectureID, lectureTitle, cb) {
+        $.ajax({
+            url: "http://localhost:5000/api/v1/lectures",
+            type: "POST",
+            data: "lectureID="+lectureID+"&lectureTitle="+lectureTitle,
+            success: function() {
+                cb();
+            }
+        });
+    }
 };

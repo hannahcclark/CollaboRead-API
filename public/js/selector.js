@@ -19,6 +19,10 @@ var selectorView = {
             }
         }
 
+        if (selectorView.breadCrumbs[0] != "All Cases" || selectorView.breadCrumbs.length > 1) {
+            $("#selectorTitle").append(" <a href='#' id='editTitle'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a>");
+        }
+
         $("#itemGrid").empty();
 
         var itr;
@@ -90,6 +94,7 @@ var selectorView = {
         selectorView.selectorScreen = "case";
         selectorView.title = caseName;
         selectorView.lectureID = 0;
+        selectorView.breadCrumbs = [selectorView.breadCrumbs[0]];
         selectorView.breadCrumbs.push(selectorView.title);
         APIClientService.retrieveCaseWithID(caseID, this.populateUIWithData);
     }

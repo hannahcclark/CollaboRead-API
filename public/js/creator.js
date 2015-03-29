@@ -166,6 +166,31 @@ var creator = {
         var scanName = "<input type='text' class='form-control' name='scanName"+index+"' id='scanName"+index+"' placeholder='Scan Name'/>"
         var scanFile = "<input type='file' name='scanFile"+index+"' id='scanFile"+index+"' multiple/>"
         return scanLabel+scanName+scanFile;
+    },
+
+    showEditTitleForLecture: function(lecture, lectureTitle) {
+        $("#creator-modal-title").html("Edit Lecture Title");
+        $("#creator-modal-button-submit").text("Create");
+
+        var form = $("<form>");
+
+        var title = "<div class='form-group'>";
+        title += "<label for='titleField'>Lecture Title</label>";
+        title += "<input type='text' name='titleField' class='form-control' id='titleField' value='"+lectureTitle+"' />";
+        title += "</div>";
+
+        form.append(title);
+
+        $("#creator-modal-body").html(form);
+        $("#creator-modal").modal("show");
+
+        $("#creator-modal-button-submit").click(function() {
+            APIClientService.editLectureTitle(lecture, $("#titleField").val(), function() {
+                selectorView.showCasesForLecture(lecture, $("#titleField").val());
+                sideBar.updateLectureList();
+                $("#creator-modal").modal("hide");
+            });
+        });
     }
 
 };

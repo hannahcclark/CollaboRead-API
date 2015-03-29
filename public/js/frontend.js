@@ -64,6 +64,10 @@ var frontEnd = {
         $("#breadcrumb1").click(function() {
             selectorView.showCase(selectorView.data["_id"], selectorView.data["name"]);
         });
+
+        $("#editTitle").click(function() {
+            creator.showEditTitleForLecture(selectorView.lectureID, selectorView.breadCrumbs[0]);
+        });
     }
     // },
     //
