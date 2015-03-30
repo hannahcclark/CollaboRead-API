@@ -9,9 +9,6 @@ var scanView = {
         $("#patientHistory").css("display", "none");
         $("#patientHistoryDescription").empty();
 
-
-
-
         for (var i in selectorView.breadCrumbs) {
             if (i == 0) {
                 $("#selectorTitle").html("<a href='#' id='breadcrumb"+i+"'>"+selectorView.breadCrumbs[i])+"</a>";
@@ -19,12 +16,9 @@ var scanView = {
                 $("#selectorTitle").append(" > <a href='#' id='breadcrumb"+i+"'>"+selectorView.breadCrumbs[i]+"</a>")
             }
         }
+
         $("#selectorTitle").append(" > "+scan["name"]);
         $("#selectorTitle").append(" <a href='#' id='editScanTitle'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a>");
-
-        $("#editScanTitle").click(function() {
-            creator.showEditTitleForScan(scanView.currentCase["_id"], scan["_id"], scan["name"]);
-        });
 
         var theater = "<div id='theater'></div>";
         $("#itemGrid").append(theater);
@@ -48,9 +42,15 @@ var scanView = {
             $("#sliceSelector").append(column);
         }
 
+        frontEnd.updateEvents();
+
         $(".selector-block").click(function() {
             $("#theater").empty();
             $("#theater").html("<img id='theaterImage' src='"+scan["slices"][this.id]["url"]+"' />");
+        });
+
+        $("#editScanTitle").click(function() {
+            creator.showEditTitleForScan(scanView.currentCase["_id"], scan["_id"], scan["name"]);
         });
     }
 };

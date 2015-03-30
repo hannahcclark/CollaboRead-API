@@ -1,8 +1,5 @@
 function init() {
     selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
-    // APIClientService.retrieveCaseWithID("5514973dee5c691f05a67a20", function(retrievedCase) {
-    //     frontEnd.presentScanView(retrievedCase["scans"][1]);
-    // });
     sideBar.updateLectureList("54f66e8e6771f0152095515a");
     frontEnd.updateEvents();
 }
