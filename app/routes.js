@@ -539,13 +539,37 @@ module.exports = function(http, ws) {
         var caseID = req.body.caseID;
         var caseTitle = req.body.caseTitle;
 
-        Cases.update({"_id": caseID}, {"name": caseTitle}, function(err, numChanged) {
-            if (err) {
-                res.status(500).end();
-            } else {
-                res.status(200).end();
-            }
-        });
+        var scanID = req.body.scanID;
+        var scanTitle = req.body.scanTitle;
+
+        if (caseTitle) {
+            Cases.update({"_id": caseID}, {"name": caseTitle}, function(err, numChanged) {
+                if (err) {
+                    res.status(500).end();
+                } else {
+                    res.status(200).end();
+                }
+            });
+
+        } else if (scanTitle) {
+            Cases.findOne({"_id": caseID}, function(err, retrievedCase) {
+                var scan = retrievedCase["scans"].filter(function(s) {
+                    return s["_id"] == scanID;
+                })[0];
+
+                if (scan) {
+                    scan["name"] = scanTitle;
+
+                    retrievedCase.save(function(err) {
+                        if (err) {
+                            res.status(500).end();
+                        } else {
+                            res.send(retrievedCase);
+                        }
+                    });
+                }
+            });
+        }
     });
 
     http.post(prefix+'submitanswer', bodyParserURLEncoded, passport.authenticate('local', {session: false}), function(req, res) {

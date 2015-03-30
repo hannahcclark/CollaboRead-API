@@ -215,6 +215,38 @@ var creator = {
                 $("#creator-modal").modal("hide");
             });
         });
+    },
+
+    showEditTitleForScan: function(caseID, scanID, scanTitle) {
+        $("#creator-modal-title").html("Edit Scan Title");
+        $("#creator-modal-button-submit").text("Create");
+
+        var form = $("<form>");
+
+        var title = "<div class='form-group'>";
+        title += "<label for='titleField'>Scan Title</label>";
+        title += "<input type='text' name='titleField' class='form-control' id='titleField' value='"+scanTitle+"' />";
+        title += "</div>";
+
+        form.append(title);
+
+        $("#creator-modal-body").html(form);
+        $("#creator-modal").modal("show");
+
+        $("#creator-modal-button-submit").click(function() {
+            APIClientService.editScanTitle(caseID, scanID, $("#titleField").val(), function(retrievedCase) {
+                selectorView.data = retrievedCase;
+
+                var currentScan = selectorView.data["scans"].filter(function(s) {
+                    return s["_id"] == scanID;
+                })[0];
+                
+                scanView.currentCase = selectorView.data;
+                scanView.showScan(currentScan);
+
+                $("#creator-modal").modal("hide");
+            });
+        });
     }
 
 };

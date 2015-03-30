@@ -49,9 +49,7 @@ var APIClientService = {
             url: "http://localhost:5000/api/v1/lectures",
             type: "PUT",
             data: "name="+name+"&owner="+ownerID,
-            success: function() {
-                cb();
-            },
+            success: cb,
             error: function() {
                 console.error("creation failed");
             }
@@ -63,9 +61,7 @@ var APIClientService = {
             url: "http://localhost:5000/api/v1/cases",
             type: "PUT",
             data: data,
-            success: function() {
-                cb();
-            },
+            success: cb,
             error: function() {
                 console.error("creation failed");
             }
@@ -79,9 +75,7 @@ var APIClientService = {
             url: "http://localhost:5000/api/v1/lectures",
             type: "POST",
             data: "lectureID="+lectureID+"&lectureTitle="+lectureTitle,
-            success: function() {
-                cb();
-            }
+            success: cb
         });
     },
 
@@ -90,8 +84,17 @@ var APIClientService = {
             url: "http://localhost:5000/api/v1/cases",
             type: "POST",
             data: "caseID="+caseID+"&caseTitle="+caseTitle,
-            success: function() {
-                cb();
+            success: cb
+        });
+    },
+
+    editScanTitle: function(caseID, scanID, scanTitle, cb) {
+        $.ajax({
+            url: "http://localhost:5000/api/v1/cases",
+            type: "POST",
+            data: "caseID="+caseID+"&scanID="+scanID+"&scanTitle="+scanTitle,
+            success: function(data) {
+                cb(data);
             }
         });
     }

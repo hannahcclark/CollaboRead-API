@@ -33,7 +33,7 @@ var frontEnd = {
                         break;
                     }
                 }
-
+                scanView.currentCase = selectorView.data;
                 scanView.showScan(currentCase);
 
             }

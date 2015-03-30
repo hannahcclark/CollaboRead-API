@@ -20,7 +20,11 @@ var scanView = {
             }
         }
         $("#selectorTitle").append(" > "+scan["name"]);
-        $("#selectorTitle").append(" <span class='glyphicon glyphicon-pencil' aria-hidden='true'></span>");
+        $("#selectorTitle").append(" <a href='#' id='editScanTitle'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></a>");
+
+        $("#editScanTitle").click(function() {
+            creator.showEditTitleForScan(scanView.currentCase["_id"], scan["_id"], scan["name"]);
+        });
 
         var theater = "<div id='theater'></div>";
         $("#itemGrid").append(theater);
