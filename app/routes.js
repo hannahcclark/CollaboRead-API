@@ -542,6 +542,8 @@ module.exports = function(http, ws) {
         var scanID = req.body.scanID;
         var scanTitle = req.body.scanTitle;
 
+        var patientInfo = req.body.patientInfo;
+
         if (caseTitle) {
             Cases.update({"_id": caseID}, {"name": caseTitle}, function(err, numChanged) {
                 if (err) {
@@ -567,6 +569,14 @@ module.exports = function(http, ws) {
                             res.send(retrievedCase);
                         }
                     });
+                }
+            });
+        } else if (patientInfo) {
+            Cases.update({"_id": caseID}, {"patientInfo": patientInfo}, function(err, numChanged) {
+                if (err) {
+                    res.status(500).end();
+                } else {
+                    res.status(200).end();
                 }
             });
         }

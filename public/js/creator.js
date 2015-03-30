@@ -217,6 +217,30 @@ var creator = {
         });
     },
 
+    showEditPatientInfoForCase: function(caseID, patientInfo) {
+        $("#creator-modal-title").html("Edit Patient Info");
+        $("#creator-modal-button-submit").text("Create");
+
+        var form = $("<form>");
+
+        var info = "<div class='form-group'>";
+        info += "<label for='infoField'>Patient Info</label>";
+        info += "<textarea name='infoField' rows='5' cols='50' class='form-control' id='infoField'>"+patientInfo+"</textarea>";
+        info += "</div>";
+
+        form.append(info);
+
+        $("#creator-modal-body").html(form);
+        $("#creator-modal").modal("show");
+
+        $("#creator-modal-button-submit").click(function() {
+            APIClientService.editCasePatientInfo(caseID, $("#infoField").val(), function() {
+                selectorView.showCase(caseID, selectorView.data["name"]);
+                $("#creator-modal").modal("hide");
+            });
+        });
+    },
+
     showEditTitleForScan: function(caseID, scanID, scanTitle) {
         $("#creator-modal-title").html("Edit Scan Title");
         $("#creator-modal-button-submit").text("Create");
@@ -240,7 +264,7 @@ var creator = {
                 var currentScan = selectorView.data["scans"].filter(function(s) {
                     return s["_id"] == scanID;
                 })[0];
-                
+
                 scanView.currentCase = selectorView.data;
                 scanView.showScan(currentScan);
 

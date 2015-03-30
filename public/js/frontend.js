@@ -71,6 +71,10 @@ var frontEnd = {
                 creator.showEditTitleForCase(selectorView.data["_id"], selectorView.data["name"]);
             }
         });
+
+        $("#editPatientInfo").click(function() {
+            creator.showEditPatientInfoForCase(selectorView.data["_id"], selectorView.data["patientInfo"]);
+        });
     }
 
 }

@@ -88,6 +88,15 @@ var APIClientService = {
         });
     },
 
+    editCasePatientInfo: function(caseID, patientInfo, cb) {
+        $.ajax({
+            url: "http://localhost:5000/api/v1/cases",
+            type: "POST",
+            data: "caseID="+caseID+"&patientInfo="+patientInfo,
+            success: cb
+        });
+    },
+
     editScanTitle: function(caseID, scanID, scanTitle, cb) {
         $.ajax({
             url: "http://localhost:5000/api/v1/cases",
