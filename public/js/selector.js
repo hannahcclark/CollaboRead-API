@@ -33,23 +33,23 @@ var selectorView = {
             itr = data.scans;
         }
 
+        if (selectorView.selectorScreen == "caseList") {
+            var blockImage = itr[i].scans[0].slices[0].url;
+            var blockTitle = itr[i].name;
+            var blockCaseCount = itr[i].scans.length;
+
+            $("#patientHistory").css("display", "none");
+            $("#patientHistoryDescription").empty();
+
+        } else if (selectorView.selectorScreen == "case") {
+            var blockImage = itr[i].slices[0].url;
+            var blockTitle = itr[i].name;
+
+            $("#patientHistory").css("display", "block");
+            $("#patientHistoryDescription").html(data.patientInfo);
+        }
+
         for (var i in itr) {
-
-            if (selectorView.selectorScreen == "caseList") {
-                var blockImage = itr[i].scans[0].slices[0].url;
-                var blockTitle = itr[i].name;
-                var blockCaseCount = itr[i].scans.length;
-
-                $("#patientHistory").css("display", "none");
-                $("#patientHistoryDescription").empty();
-
-            } else if (selectorView.selectorScreen == "case") {
-                var blockImage = itr[i].slices[0].url;
-                var blockTitle = itr[i].name;
-
-                $("#patientHistory").css("display", "block");
-                $("#patientHistoryDescription").html(data.patientInfo);
-            }
 
             var selectorBlock = $("<div>", {id: blockTitle+"&"+itr[i]["_id"], class: "selector-block"});
 
