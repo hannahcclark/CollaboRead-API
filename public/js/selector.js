@@ -61,6 +61,10 @@ var selectorView = {
                 selectorBlockBottomText +=  " ("+blockCaseCount+")";
             }
 
+            if (selectorView.selectorScreen == "caseList") {
+                selectorBlockBottomText += "<p>"+itr[i].patientInfo+"</p>";
+            }
+
             var selectorBlockBottom = "<div class='selector-block-bottom'>"+selectorBlockBottomText+"</div>";
 
             selectorBlock.append(selectorBlockTop+selectorBlockBottom);
