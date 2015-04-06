@@ -19,7 +19,6 @@ var frontEnd = {
                 selectorView.showCase(caseID, caseName);
 
             } else if (selectorView.selectorScreen == "case") {
-
                 var separatorIndex = this.id.indexOf("&");
                 var caseID = this.id.substring(separatorIndex+1, this.id.length);
                 var currentCase;
@@ -32,6 +31,7 @@ var frontEnd = {
                 }
                 scanView.currentCase = selectorView.data;
                 scanView.showScan(currentCase);
+                selectorView.selectorScreen = "scan";
 
             }
         });
