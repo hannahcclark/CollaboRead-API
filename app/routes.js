@@ -15,6 +15,7 @@ var Lectures = require('../app/models/caseSets');
 var Cases = require('../app/models/case');
 var Scan = require('../app/models/scan');
 var Slice = require('../app/models/slice');
+var Answer = require('../app/models/answer');
 
 var prefix = "/api/v1/"
 
@@ -437,7 +438,8 @@ module.exports = function(http, ws) {
                     var responseData = {
                         "name": lecture["name"],
                         "owners": lecture["owners"],
-                        "cases": cases
+                        "cases": cases,
+                        "lectureID": lectureID
                     };
 
                     res.send(responseData);
@@ -459,7 +461,8 @@ module.exports = function(http, ws) {
                         var responseData = {
                             "name": lecture["name"],
                             "owners": lecture["owners"],
-                            "cases": cases
+                            "cases": cases,
+                            "lectureID": lecture["_id"]
                         };
                         callback(err, responseData);
                     });
@@ -637,6 +640,39 @@ module.exports = function(http, ws) {
                 }
             });
         }
+    });
+
+    http.put(prefix+'answer', bodyParserURLEncoded, function(req, res) {
+        var lectureID = req.body.lectureID;
+        var caseID = req.body.caseID;
+        var owners = req.body.owners;
+        var groupName = req.body.groupName;
+        var drawings = req.body.drawings;
+
+        Answer.findOne({"lectureID": lectureID, "caseID": caseID, "owners": owners}, function(err, answer) {
+            if (answer) {
+                // resubmission
+
+            } else {
+
+                var newAnswer = new Answer({
+                    "lectureID": lectureID,
+                    "caseID": caseID,
+                    "owners": JSON.parse(owners),
+                    "groupName": groupName,
+                    "drawings": JSON.parse(drawings),
+                    "submissionDate": (new Date()).getTime()
+                });
+
+                newAnswer.save(function(err) {
+                    if (err) {
+                        res.status(500).end();
+                    } else {
+                        res.status(200).end();
+                    }
+                });
+            }
+        });
     });
 
     http.post(prefix+'submitanswer', bodyParserURLEncoded, passport.authenticate('local', {session: false}), function(req, res) {
