@@ -394,6 +394,7 @@ module.exports = function(http, ws) {
         var caseID = req.body.caseID;
         var owners = req.body.owners;
         var answerName = req.body.answerName;
+        var colors = req.body.colors;
 
         //rename this shit
         var answerData = req.body.drawings;
@@ -410,6 +411,7 @@ module.exports = function(http, ws) {
                         "owners": JSON.parse(owners),
                         "answerName": answerName,
                         "drawings": JSON.parse(answerData),
+                        "colors": JSON.parse(colors),
                         "submissionDate": (new Date()).getTime()
                     }
 
