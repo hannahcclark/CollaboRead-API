@@ -415,6 +415,63 @@ module.exports = function(http, ws) {
         });
     });
 
+    http.get(prefix+'caseSet', function(req, res) {
+
+
+        var lectureID = req.query.lectureID;
+        var lecturerID = req.query.lecturerID;
+
+        var params = {};
+
+        if (lectureID) {
+
+            Lectures.findOne({"_id": lectureID}, function(err, lecture) {
+
+                var caseRetriever = function(caseID, callback) {
+                    Cases.findOne({"_id": caseID}, function(err, retrievedCase) {
+                        callback(err, retrievedCase);
+                    });
+                };
+
+                async.map(lecture.cases, caseRetriever, function(err, cases) {
+                    var responseData = {
+                        "name": lecture["name"],
+                        "owners": lecture["owners"],
+                        "cases": cases
+                    };
+
+                    res.send(responseData);
+                });
+            });
+
+        } else if (lecturerID) {
+
+            Lectures.find({"owners": lecturerID}, function(err, lectures) {
+
+                var caseRetriever = function(caseID, callback) {
+                    Cases.findOne({"_id": caseID}, function(err, retrievedCase) {
+                        callback(err, retrievedCase);
+                    });
+                };
+
+                var lectureCaseList = function(lecture, callback) {
+                    async.map(lecture.cases, caseRetriever, function(err, cases) {
+                        var responseData = {
+                            "name": lecture["name"],
+                            "owners": lecture["owners"],
+                            "cases": cases
+                        };
+                        callback(err, responseData);
+                    });
+                }
+
+                async.map(lectures, lectureCaseList, function(err, newLectures) {
+                    res.send(newLectures);
+                });
+            });
+        }
+    });
+
     http.get(prefix+'cases', function(req, res) {
 
         var lectureOwnerID = req.query.lectureOwnerID;
