@@ -647,7 +647,7 @@ module.exports = function(http, ws) {
         var caseID = req.query.caseID;
         var ownerID = req.query.ownerID;
 
-        if (ownerID) {
+        if (ownerID && lectureID && caseID) {
             Answer.findOne({"lectureID": lectureID, "caseID": caseID, "owners": ownerID}, function(err, answer) {
 
                 if (err) {
@@ -658,6 +658,18 @@ module.exports = function(http, ws) {
                     res.send(answer);
                 }
             });
+
+        } else if (lectureID && caseID) {
+            Answer.find({"lectureID": lectureID, "caseID": caseID}, function(err, answers) {
+                if (err) {
+                    res.status(500).end();
+                } else {
+                    res.send(answers);
+                }
+            });
+
+        } else {
+            res.status(500).end();
         }
     });
 
