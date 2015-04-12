@@ -642,6 +642,25 @@ module.exports = function(http, ws) {
         }
     });
 
+    http.get(prefix+'answer', function(req, res) {
+        var lectureID = req.query.lectureID;
+        var caseID = req.query.caseID;
+        var ownerID = req.query.ownerID;
+
+        if (ownerID) {
+            Answer.findOne({"lectureID": lectureID, "caseID": caseID, "owners": ownerID}, function(err, answer) {
+
+                if (err) {
+                    res.status(500).end();
+                } else if (answer == null) {
+                    res.status(404).end();
+                } else {
+                    res.send(answer);
+                }
+            });
+        }
+    });
+
     http.put(prefix+'answer', bodyParserURLEncoded, function(req, res) {
         var lectureID = req.body.lectureID;
         var caseID = req.body.caseID;
@@ -649,9 +668,18 @@ module.exports = function(http, ws) {
         var groupName = req.body.groupName;
         var drawings = req.body.drawings;
 
-        Answer.findOne({"lectureID": lectureID, "caseID": caseID, "owners": owners}, function(err, answer) {
-            if (answer) {
-                // resubmission
+        Answer.findOne({"lectureID": lectureID, "caseID": caseID, "owners": JSON.parse(owners)}, function(err, answer) {
+            if (answer != null) {
+                answer["drawings"] = JSON.parse(drawings);
+                answer["submissionDate"] = (new Date()).getTime();
+
+                answer.save(function(err) {
+                    if (err) {
+                        res.status(500).end();
+                    } else {
+                        res.status(200).end();
+                    }
+                });
 
             } else {
 
