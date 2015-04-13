@@ -3,9 +3,17 @@ var async = require('async');
 var bodyParser = require('body-parser');
 var bodyParserURLEncoded = bodyParser.urlencoded({extended: true});
 
+var fs = require('fs');
+
 var validator = require('validator');
 var bcrypt = require('bcrypt');
 var crypto = require('crypto');
+
+var colorGen = require('color-assignment-generator');
+
+fs.readFile(__dirname + "/colorFile/color.txt", function(err, data) {
+    colorGen.setSavedValues(JSON.parse(data));
+});
 
 var nodemailer = require('nodemailer');
 var markdown = require('nodemailer-markdown').markdown;
@@ -144,6 +152,7 @@ module.exports = function(http, ws) {
                                 "email": req.body.email,
                                 "password": bcrypt.hashSync(req.body.password,10),
                                 "caseSets": [],
+                                "color": colorGen.getColor(),
                                 "verified": false,
                                 "resetPasswordToken": token,
                                 "resetPasswordExpires": Date.now() + 3600000 //1 hour
@@ -153,6 +162,13 @@ module.exports = function(http, ws) {
                                 if (err) {
                                     res.status(404).end();
                                 } else {
+
+                                    fs.writeFile(__dirname + "/colorFile/color.txt", JSON.stringify(colorGen.getSavedValues()), function(err) {
+                                        if (err) {
+                                            return console.log(err);
+                                        }
+                                    });
+
                                     done(err, token, user);
                                 }
                             });
@@ -730,6 +746,7 @@ module.exports = function(http, ws) {
         var caseID = req.body.caseID;
         var owners = req.body.owners;
         var answerName = req.body.answerName;
+        var colors = req.body.colors;
 
         //rename this shit
         var answerData = req.body.drawings;
@@ -746,6 +763,7 @@ module.exports = function(http, ws) {
                         "owners": JSON.parse(owners),
                         "answerName": answerName,
                         "drawings": JSON.parse(answerData),
+                        "colors": JSON.parse(colors),
                         "submissionDate": (new Date()).getTime()
                     }
 

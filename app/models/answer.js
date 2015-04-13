@@ -12,6 +12,11 @@ var Answer = mongoose.Schema({
             isEnd   : Number
         }]
     }],
+    colors: {
+        r: Number,
+        g: Number,
+        b: Number
+    },
     submissionDate  : Date,
     caseID: String,
     lectureID: String
