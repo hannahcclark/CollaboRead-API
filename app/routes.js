@@ -67,7 +67,7 @@ function reportError(status, error, response) {
     response.send()
 }
 
-var updateDates = {};
+var wsClientMap = {};
 
 //nothing is validated right now. that should be fixed
 
@@ -689,6 +689,9 @@ module.exports = function(http, ws) {
                     if (err) {
                         res.status(500).end();
                     } else {
+                        if (wsClientMap[lectureID]) {
+                            wsClientMap[lectureID].send("UPDATE");
+                        }
                         res.status(200).end();
                     }
                 });
@@ -708,6 +711,9 @@ module.exports = function(http, ws) {
                     if (err) {
                         res.status(500).end();
                     } else {
+                        if (wsClientMap[lectureID]) {
+                            wsClientMap[lectureID].send("UPDATE");
+                        }
                         res.status(200).end();
                     }
                 });
@@ -779,19 +785,20 @@ module.exports = function(http, ws) {
                         } else {
                             res.send(caseSet)
                         }
-                    })
+                    });
                 }
-            })
+            });
         }
-    })
+    });
 
 // websockets
 
-    ws.on('connection', function connection(connection) {
-        connection.on('message', function incoming(message) {
+    ws.on('connection', function(connection) {
+        connection.on('message', function(message) {
             if (message) {
-                if (updateDates[message]) {
-                    connection.send(updateDates[message].toString());
+                if (message.substr(0, message.indexOf(':')) == "INTRO") {
+                    var caseID = message.substr(message.indexOf(':')+1, message.length);
+                    wsClientMap[caseID] = connection;
                 }
             }
         });
