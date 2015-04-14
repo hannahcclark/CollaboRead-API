@@ -1,1 +1,1 @@
-{"color":60,"offset":0,"split":30,"minSplit":3}
+{"color":180,"offset":0,"split":30,"minSplit":3}

@@ -695,6 +695,7 @@ module.exports = function(http, ws) {
         var owners = req.body.owners;
         var groupName = req.body.groupName;
         var drawings = req.body.drawings;
+        var colors = req.body.colors;
 
         Answer.findOne({"lectureID": lectureID, "caseID": caseID, "owners": JSON.parse(owners)}, function(err, answer) {
             if (answer != null) {
@@ -720,6 +721,7 @@ module.exports = function(http, ws) {
                     "owners": JSON.parse(owners),
                     "groupName": groupName,
                     "drawings": JSON.parse(drawings),
+                    "colors": JSON.parse(colors),
                     "submissionDate": (new Date()).getTime()
                 });
 
