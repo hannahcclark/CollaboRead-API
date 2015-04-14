@@ -700,6 +700,7 @@ module.exports = function(http, ws) {
         Answer.findOne({"lectureID": lectureID, "caseID": caseID, "owners": JSON.parse(owners)}, function(err, answer) {
             if (answer != null) {
                 answer["drawings"] = JSON.parse(drawings);
+                answer["groupName"] = groupName;
                 answer["submissionDate"] = (new Date()).getTime();
 
                 answer.save(function(err) {
