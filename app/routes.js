@@ -729,7 +729,7 @@ module.exports = function(http, ws) {
                     if (err) {
                         res.status(500).end();
                     } else {
-                        if (wsClientMap[lectureID]) {
+                        if (wsClientMap[lectureID] && wsClientMap[lectureID].readyState === 1) {
                             wsClientMap[lectureID].send("UPDATE");
                         }
                         res.status(200).end();
