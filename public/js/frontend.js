@@ -1,6 +1,6 @@
 function init() {
-    selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
-    sideBar.updateLectureList("54f66e8e6771f0152095515a");
+    selectorView.showAllCasesForLecturer("552c5ab98f7c17384e68cf6e");
+    sideBar.updateLectureList("552c5ab98f7c17384e68cf6e");
     frontEnd.updateEvents();
 }
 
@@ -37,7 +37,7 @@ var frontEnd = {
         });
 
         $("#sidebar-all-cases").click(function() {
-            selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
+            selectorView.showAllCasesForLecturer("552c5ab98f7c17384e68cf6e");
         });
 
         $(".lecture-selector").click(function() {
@@ -55,7 +55,7 @@ var frontEnd = {
         });
 
         $("#breadcrumb0").click(function() {
-            selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
+            selectorView.showAllCasesForLecturer("552c5ab98f7c17384e68cf6e");
         });
 
         $("#breadcrumb1").click(function() {

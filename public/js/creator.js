@@ -17,7 +17,7 @@ var creator = {
         $("#creator-modal").modal("show");
 
         $("#creator-modal-button-submit").click(function() {
-            APIClientService.createLecture($("#nameField").val(), "54f66e8e6771f0152095515a", function() {
+            APIClientService.createLecture($("#nameField").val(), "552c5ab98f7c17384e68cf6e", function() {
                 sideBar.updateLectureList();
                 $("#creator-modal").modal("hide");
             });
@@ -87,7 +87,7 @@ var creator = {
                 var fileURLList = [];
 
                 for (var i = 0; i < fileList.length; i++) {
-                    fileURLList.push("http://s3.amazonaws.com/collaboread/img/cases/54f66e8e6771f0152095515a" + "/" + $("#nameField").val() + "/" + $("#scanName"+scan).val() + "/" + fileList[i].name);
+                    fileURLList.push("http://s3.amazonaws.com/collaboread/img/cases/552c5ab98f7c17384e68cf6e" + "/" + $("#nameField").val() + "/" + $("#scanName"+scan).val() + "/" + fileList[i].name);
                 }
 
                 scanURLList.push(fileURLList);
@@ -102,7 +102,7 @@ var creator = {
 
         var file = fileList[index];
 
-        var fileName = "img/cases/54f66e8e6771f0152095515a" + "/" + $("#nameField").val() + "/" + $("#scanName"+scan).val() + "/" + file.name;
+        var fileName = "img/cases/552c5ab98f7c17384e68cf6e" + "/" + $("#nameField").val() + "/" + $("#scanName"+scan).val() + "/" + file.name;
 
         var params = {  Key: fileName,
                         ContentType: file.type,
@@ -113,7 +113,7 @@ var creator = {
              if (index < fileList.length - 1) {
                 creator.uploadFiles(fileList, index+1, scan, bucket);
             }
-            selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
+            selectorView.showAllCasesForLecturer("552c5ab98f7c17384e68cf6e");
         });
 
     },
@@ -146,7 +146,7 @@ var creator = {
         var caseData = {
             "name": $("#nameField").val(),
             "patientInfo": $("#patientInfoField").val(),
-            "owners": ["54f66e8e6771f0152095515a"],
+            "owners": ["552c5ab98f7c17384e68cf6e"],
             "scans": scanList
         }
 
@@ -155,7 +155,7 @@ var creator = {
         }
 
         APIClientService.createCase(caseData, function() {
-            selectorView.showAllCasesForLecturer("54f66e8e6771f0152095515a");
+            selectorView.showAllCasesForLecturer("552c5ab98f7c17384e68cf6e");
             $("#creator-modal").modal("hide");
         });
 
