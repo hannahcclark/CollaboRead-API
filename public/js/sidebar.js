@@ -19,6 +19,8 @@ var sideBar = {
                 var lectureText = "<a href='#' class='lecture-selector'><span class='glyphicon glyphicon-folder-close'></span> "+lectureName+"</a>";
                 $("#sidebar-lecture-list").append("<li class='lecture-selector' id="+i+"_"+lectureID+">"+lectureText+"</li>")
             }
+
+            frontEnd.updateEvents();
         });
     }
 
