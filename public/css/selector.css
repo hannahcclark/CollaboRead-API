@@ -28,3 +28,7 @@ div.selector-block-bottom {
 #patientHistory {
     display: none;
 }
+
+.selector-block-bottom-detail-text {
+    font-size: 12px;
+}

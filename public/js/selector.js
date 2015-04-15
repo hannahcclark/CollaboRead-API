@@ -62,7 +62,7 @@ var selectorView = {
             }
 
             if (selectorView.selectorScreen == "caseList") {
-                selectorBlockBottomText += "<p>"+itr[i].patientInfo+"</p>";
+                selectorBlockBottomText += "<p class='selector-block-bottom-detail-text'>"+itr[i].patientInfo+"</p>";
             }
 
             var selectorBlockBottom = "<div class='selector-block-bottom'>"+selectorBlockBottomText+"</div>";
