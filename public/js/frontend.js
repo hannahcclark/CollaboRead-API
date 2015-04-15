@@ -38,12 +38,18 @@ var frontEnd = {
 
         $("#sidebar-all-cases").click(function() {
             selectorView.showAllCasesForLecturer("552c5ab98f7c17384e68cf6e");
+            $(".lecture-selector").removeClass("nav-sidebar-active");
+            $("#sidebar-all-cases-li").removeClass("nav-sidebar-active");
+            $("#sidebar-all-cases-li").addClass("nav-sidebar-active");
         });
 
         $(".lecture-selector").click(function() {
             var caseID = this.id.substring(2, this.id.length);
             var lectureIndex = parseInt(this.id.substring(0,1));
             selectorView.showCasesForLecture(caseID, this.innerText);
+            $(".lecture-selector").removeClass("nav-sidebar-active");
+            $("#sidebar-all-cases-li").removeClass("nav-sidebar-active");
+            $(this).addClass("nav-sidebar-active");
         });
 
         $("#sidebar-new-lecture").click(function() {
